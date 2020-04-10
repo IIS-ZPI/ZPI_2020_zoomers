@@ -41,7 +41,7 @@ namespace zpi_aspnet_test.Tests.Feature_Parser.Tests
       }
 
       [TestMethod]
-      public void TestGuamDoesntHaveSalesTaxRateForIntagibles()
+      public void TestGuamDoesntHaveSalesTaxRateForIntangibles()
       {
          var collection = Parser.GetStatesModelsFromWikipedia();
          var Guam = collection.First(model => model.Name.Equals("Guam"));
