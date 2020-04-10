@@ -32,3 +32,17 @@ steps:
   inputs:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
+  # inputs:
+  #   pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
+  #   artifactName: 'drop' 
+  #   publishLocation: 'FilePath' # Options: container, filePath
+  #   targetPath: '$(System.DefaultWorkingDirectory)/bin/WebApp' # Required when publishLocation == FilePath
+  #   #parallel: false # Optional
+  #   #parallelCount: # Optional
+  #   #fileCopyOptions: #Optional
