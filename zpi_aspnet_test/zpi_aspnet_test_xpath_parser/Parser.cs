@@ -9,9 +9,9 @@ using zpi_aspnet_test.Models;
 
 namespace zpi_aspnet_test_xpath_parser
 {
-   public class Parser
+   public static class Parser
    {
-      public List<StateOfAmericaModel> GetStatesModelsFromWikipedia()
+      public static List<StateOfAmericaModel> GetStatesModelsFromWikipedia()
       {
          var web = new HtmlWeb();
          var html = web.Load(@"https://en.wikipedia.org/wiki/Sales_taxes_in_the_United_States");
