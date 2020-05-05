@@ -13,7 +13,7 @@ namespace zpi_aspnet_test.Models
         public string Id { get; set; }
         public string Name { get; set; }
         public double PurchasePrice { get; set; }
-        public double BasePrice { get; set; }
+        public double PreferredPrice { get; set; }
         public double FinalPrice { get; set; }
 
         public override string ToString()
@@ -21,7 +21,7 @@ namespace zpi_aspnet_test.Models
             StringBuilder builder = new StringBuilder();
             builder.Append("------------------------------------\n");
             builder.Append($"Category: {Category}, ID: {Id}, Name: {Name}, Purchase price: {PurchasePrice}," +
-                           $"Base price: {BasePrice}, Final price: {FinalPrice}\n");
+                           $"Preferred price: {PreferredPrice}, Final price: {FinalPrice}\n");
             builder.Append("------------------------------------\n");
 
             return builder.ToString();
