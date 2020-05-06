@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using zpi_aspnet_test.Models;
 
-namespace zpi_aspnet_test_algorithms
+namespace zpi_aspnet_test_algorithms_library
 {
     class Algorithms
     {
