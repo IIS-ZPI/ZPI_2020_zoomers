@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zpi_aspnet_test.Tests", "zp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zpi_aspnet_test_xpath_parser", "zpi_aspnet_test_xpath_parser\zpi_aspnet_test_xpath_parser.csproj", "{E1A13211-4DAC-43E2-BA09-57B9FEC44079}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zpi_aspnet_test_algorithms", "Algorithms\zpi_aspnet_test_algorithms.csproj", "{DA2221BB-2039-414A-AFE9-7455112F560A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{E1A13211-4DAC-43E2-BA09-57B9FEC44079}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E1A13211-4DAC-43E2-BA09-57B9FEC44079}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E1A13211-4DAC-43E2-BA09-57B9FEC44079}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA2221BB-2039-414A-AFE9-7455112F560A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA2221BB-2039-414A-AFE9-7455112F560A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA2221BB-2039-414A-AFE9-7455112F560A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA2221BB-2039-414A-AFE9-7455112F560A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
