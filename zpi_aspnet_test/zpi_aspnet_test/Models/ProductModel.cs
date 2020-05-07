@@ -1,20 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Web;
+using System.Web.Mvc;
 using zpi_aspnet_test.Enumerators;
 
 namespace zpi_aspnet_test.Models
 {
+    [Table("ProductModel")]
     public class ProductModel
     {
+        [Key]
         public ProductCategoryEnum Category { get; set; }
         public string Id { get; set; }
         public string Name { get; set; }
         public double PurchasePrice { get; set; }
         public double PreferredPrice { get; set; }
         public double FinalPrice { get; set; }
+
+        [NotMapped]
+        public SelectList ProductList { get; set; }
 
         public override string ToString()
         {
