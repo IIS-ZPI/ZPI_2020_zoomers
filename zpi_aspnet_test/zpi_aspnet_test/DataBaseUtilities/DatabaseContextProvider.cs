@@ -7,6 +7,8 @@ namespace zpi_aspnet_test.DataBaseUtilities
    {
       public Database DatabaseContext { get; private set; }
 
+      public bool Connected { get; private set; }
+
       private static readonly Lazy<DatabaseContextProvider> LazyInitializer =
          new Lazy<DatabaseContextProvider>(() => new DatabaseContextProvider());
 
@@ -32,12 +34,15 @@ namespace zpi_aspnet_test.DataBaseUtilities
             rV = false;
          }
 
+         Connected = rV;
+
          return rV;
       }
 
       public void DisconnectFromDb()
       {
          DatabaseContext?.Dispose();
+         Connected = false;
       }
 
    }

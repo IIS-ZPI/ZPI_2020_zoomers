@@ -2,7 +2,7 @@
 using zpi_aspnet_test.DataBaseUtilities.Interfaces;
 using zpi_aspnet_test.Models;
 
-namespace zpi_aspnet_test.DataBaseUtilities.DAO
+namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 {
 	public class StandardCategoryDatabaseAccessor : ICategoryDatabaseAccess
 	{
