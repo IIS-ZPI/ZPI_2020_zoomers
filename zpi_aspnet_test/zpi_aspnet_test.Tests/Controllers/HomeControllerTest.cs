@@ -15,6 +15,9 @@ namespace zpi_aspnet_test.Tests.Controllers
         [TestMethod]
         public void Index()
         {
+            Assert.IsNotNull(ConfigurationManager.ConnectionStrings);
+
+            Assert.IsTrue(ConfigurationManager.ConnectionStrings.Count >= 2);
             // Arrange
             HomeController controller = new HomeController();
 
