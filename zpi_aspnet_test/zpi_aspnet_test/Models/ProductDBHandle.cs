@@ -10,7 +10,13 @@ namespace zpi_aspnet_test.Models
 {
     public class ProductDBHandle
     {
-        SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["Connector"].ToString());
+
+        SqlConnection connection = null;
+
+        public ProductDBHandle()
+        {
+            this.connection = new SqlConnection(ConfigurationManager.ConnectionStrings["Connector"].ToString());
+        }
 
         public IEnumerable<ProductModel> GetProducts()
         {
