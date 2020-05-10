@@ -15,8 +15,8 @@ namespace zpi_aspnet_test.Models
         public IEnumerable<ProductModel> GetProducts()
         {
             string query =
-                "SELECT [ProductCategory].[name], [ProductModel].[id], [ProductModel].[Name], [PurchasePrice] FROM [dbo].[ProductModel], [dbo].[ProductCategory]" +
-                "WHERE [Category_id] = [ProductCategory].[id]";
+                "SELECT [Categories].[Name], [Products].[Id], [Products].[Name], [PurchasePrice] FROM [dbo].[Products], [dbo].[Categories]" +
+                "WHERE [Category_id] = [Categories].[Id]";
 
             var result = connection.Query<ProductModel>(query);
 
