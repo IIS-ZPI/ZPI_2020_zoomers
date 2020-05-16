@@ -9,7 +9,7 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 	public class StandardCategoryDatabaseAccessor : ICategoryDatabaseAccess
 	{
 
-		private readonly DatabaseContextProvider _provider;
+		private readonly IDatabaseContextProvider _provider;
 
 		public StandardCategoryDatabaseAccessor()
 		{

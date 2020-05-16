@@ -1,9 +1,10 @@
 ﻿using System;
 using PetaPoco;
+using zpi_aspnet_test.DataBaseUtilities.Interfaces;
 
 namespace zpi_aspnet_test.DataBaseUtilities
 {
-   public class DatabaseContextProvider
+   public class DatabaseContextProvider : IDatabaseContextProvider
    {
       public IDatabase DatabaseContext { get; private set; }
 
