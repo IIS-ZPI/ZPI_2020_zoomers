@@ -3,7 +3,7 @@ using zpi_aspnet_test.Models;
 
 namespace zpi_aspnet_test.DataBaseUtilities.Interfaces
 {
-	public interface ICategoryDatabaseAccess
+	public interface ICategoryDatabaseAccess : IDatabaseAccessor
 	{
 		ICollection<CategoryModel> GetCategories();
 		CategoryModel GetCategoryById(int id);

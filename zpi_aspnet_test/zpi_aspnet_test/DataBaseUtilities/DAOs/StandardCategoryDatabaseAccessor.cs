@@ -10,12 +10,12 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 	public class StandardCategoryDatabaseAccessor : ICategoryDatabaseAccess
 	{
-		private readonly IDatabaseContextProvider _provider;
-
 		public StandardCategoryDatabaseAccessor()
 		{
 			_provider = DatabaseContextProvider.Instance;
 		}
+
+		private IDatabaseContextProvider _provider;
 
 		public ICollection<CategoryModel> GetCategories()
 		{
@@ -83,6 +83,11 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 		public void DeleteCategory(string name)
 		{
 			throw new System.NotImplementedException();
+		}
+
+		public void SetProvider(IDatabaseContextProvider provider)
+		{
+			_provider = provider;
 		}
 	}
 }

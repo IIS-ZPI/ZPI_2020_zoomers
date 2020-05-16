@@ -3,7 +3,7 @@ using zpi_aspnet_test.Models;
 
 namespace zpi_aspnet_test.DataBaseUtilities.Interfaces
 {
-	public interface IStateDatabaseAccess
+	public interface IStateDatabaseAccess : IDatabaseAccessor
 	{
 		ICollection<StateOfAmericaModel> GetStates();
 		StateOfAmericaModel GetStateById(int id);

@@ -76,5 +76,10 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 		{
 			throw new System.NotImplementedException();
 		}
+
+		public void SetProvider(IDatabaseContextProvider provider)
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

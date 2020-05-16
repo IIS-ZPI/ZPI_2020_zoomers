@@ -122,13 +122,23 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="DataBaseUtilities\DatabaseConnector.cs" />
-    <Compile Include="DataBaseUtilities\DatabaseOperations.cs" />
+    <Compile Include="DataBaseUtilities\DAOs\StandardCategoryDatabaseAccessor.cs" />
+    <Compile Include="DataBaseUtilities\DAOs\StandardProductDatabaseAccessor.cs" />
+    <Compile Include="DataBaseUtilities\DAOs\StandardStateDatabaseAccessor.cs" />
+    <Compile Include="DataBaseUtilities\DatabaseContextProvider.cs" />
+    <Compile Include="DataBaseUtilities\Exceptions\AccessToNotConnectedDatabaseException.cs" />
+    <Compile Include="DataBaseUtilities\Exceptions\InvalidDatabaseOperationException.cs" />
+    <Compile Include="DataBaseUtilities\Exceptions\ItemAlreadyExistsException.cs" />
+    <Compile Include="DataBaseUtilities\Exceptions\ItemNotFoundException.cs" />
+    <Compile Include="DataBaseUtilities\Interfaces\ICategoryDatabaseAccess.cs" />
+    <Compile Include="DataBaseUtilities\Interfaces\IProductDatabaseAccess.cs" />
+    <Compile Include="DataBaseUtilities\Interfaces\IStateDatabaseAccess.cs" />
     <Compile Include="Enumerators\ProductCategoryEnum.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\CategoryModel.cs" />
     <Compile Include="Models\Generated\Database.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

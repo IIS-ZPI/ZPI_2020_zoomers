@@ -3,7 +3,7 @@ using zpi_aspnet_test.Models;
 
 namespace zpi_aspnet_test.DataBaseUtilities.Interfaces
 {
-   public interface IProductDatabaseAccess
+   public interface IProductDatabaseAccess : IDatabaseAccessor
    {
       ICollection<ProductModel> GetProducts();
       ProductModel GetProductById(int id);
