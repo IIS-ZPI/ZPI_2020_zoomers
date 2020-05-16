@@ -10,5 +10,9 @@ namespace zpi_aspnet_test.DataBaseUtilities.Exceptions
 		{
 
 		}
+
+		public ItemNotFoundException()
+		{
+		}
 	}
 }

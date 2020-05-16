@@ -5,7 +5,7 @@ namespace zpi_aspnet_test.DataBaseUtilities
 {
    public class DatabaseContextProvider
    {
-      public Database DatabaseContext { get; private set; }
+      public IDatabase DatabaseContext { get; private set; }
 
       public bool Connected { get; private set; }
 

@@ -9,8 +9,8 @@ namespace zpi_aspnet_test.DataBaseUtilities.Interfaces
 		CategoryModel GetCategoryById(int id);
 		CategoryModel GetCategoryByName(string name);
 
-		void InsertCategory(string name);
-		void InsertCategory(CategoryModel category);
+		int InsertCategory(string name);
+		int InsertCategory(CategoryModel category);
 
 		void UpdateCategory(CategoryModel category);
 		void UpdateCategory(int id, string value);

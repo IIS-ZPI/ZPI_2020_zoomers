@@ -8,5 +8,9 @@ namespace zpi_aspnet_test.DataBaseUtilities.Exceptions
 		protected ItemAlreadyExistsException(System.Runtime.Serialization.SerializationInfo serializationInfo, System.Runtime.Serialization.StreamingContext streamingContext) : base(serializationInfo, streamingContext)
 		{
 		}
+
+		public ItemAlreadyExistsException()
+		{
+		}
 	}
 }
