@@ -6,9 +6,10 @@ using zpi_aspnet_test.Models;
 
 namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 {
+	//TODO surround all DB access operations into DB transactions
+
 	public class StandardCategoryDatabaseAccessor : ICategoryDatabaseAccess
 	{
-
 		private readonly IDatabaseContextProvider _provider;
 
 		public StandardCategoryDatabaseAccessor()
