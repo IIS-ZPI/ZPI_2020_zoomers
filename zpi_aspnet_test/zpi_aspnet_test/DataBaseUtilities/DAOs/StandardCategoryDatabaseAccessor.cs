@@ -87,7 +87,7 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 		public void SetProvider(IDatabaseContextProvider provider)
 		{
-			_provider = provider;
+			_provider = provider ?? throw new InvalidDatabaseOperationException("Database provider is null");
 		}
 	}
 }

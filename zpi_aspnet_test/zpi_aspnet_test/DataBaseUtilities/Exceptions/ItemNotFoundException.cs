@@ -14,5 +14,13 @@ namespace zpi_aspnet_test.DataBaseUtilities.Exceptions
 		public ItemNotFoundException()
 		{
 		}
+
+		public ItemNotFoundException(string message) : base (message)
+		{
+		}
+
+		public ItemNotFoundException(string message, Exception inner) : base(message, inner)
+		{
+		}
 	}
 }

@@ -12,5 +12,13 @@ namespace zpi_aspnet_test.DataBaseUtilities.Exceptions
 		public AccessToNotConnectedDatabaseException()
 		{
 		}
+
+		public AccessToNotConnectedDatabaseException(string msg) : base(msg)
+		{
+		}
+
+		public AccessToNotConnectedDatabaseException(string msg, Exception inner) : base(msg, inner)
+		{
+		}
 	}
 }

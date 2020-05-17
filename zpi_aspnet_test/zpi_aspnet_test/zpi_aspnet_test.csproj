@@ -131,6 +131,8 @@
     <Compile Include="DataBaseUtilities\Exceptions\ItemAlreadyExistsException.cs" />
     <Compile Include="DataBaseUtilities\Exceptions\ItemNotFoundException.cs" />
     <Compile Include="DataBaseUtilities\Interfaces\ICategoryDatabaseAccess.cs" />
+    <Compile Include="DataBaseUtilities\Interfaces\IDatabaseAccessor.cs" />
+    <Compile Include="DataBaseUtilities\Interfaces\IDatabaseContextProvider.cs" />
     <Compile Include="DataBaseUtilities\Interfaces\IProductDatabaseAccess.cs" />
     <Compile Include="DataBaseUtilities\Interfaces\IStateDatabaseAccess.cs" />
     <Compile Include="Enumerators\ProductCategoryEnum.cs" />
