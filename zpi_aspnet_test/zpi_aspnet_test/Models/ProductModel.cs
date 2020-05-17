@@ -3,14 +3,17 @@ using PetaPoco;
 
 namespace zpi_aspnet_test.Models
 {
-	[TableName("ProductModel"), PrimaryKey("id")]
+	[TableName("Products"), PrimaryKey("Id")]
 	public class ProductModel
 	{
 		  [ResultColumn]
 		  public CategoryModel Category { get; set; }
 
-		  [Column(Name = "id")]
-		  public string Id { get; set; }
+		  [Column]
+		  public int Id { get; set; }
+
+		  [Column("Category_id")]
+		  public int CategoryId { get; set; }
 
 		  [Column]
 		  public string Name { get; set; }
