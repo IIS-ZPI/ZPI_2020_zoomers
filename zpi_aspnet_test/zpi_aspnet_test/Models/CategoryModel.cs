@@ -2,13 +2,11 @@
 
 namespace zpi_aspnet_test.Models
 {
-   [TableName("ProductCategory"), PrimaryKey("id")]
+   [TableName("Categories"), PrimaryKey("Id")]
    public class CategoryModel
    {
-      [Column(Name = "id")]
       public int Id { get; set; }
 
-      [Column(Name = "name")]
       public string Name { get; set; }
    }
 }
