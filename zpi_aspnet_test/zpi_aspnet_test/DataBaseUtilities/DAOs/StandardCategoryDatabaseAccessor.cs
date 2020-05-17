@@ -20,7 +20,7 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 		public ICollection<CategoryModel> GetCategories()
 		{
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
-			var categories = _provider.DatabaseContext.Query<CategoryModel>("SELECT * FROM ProductCategory").ToList();
+			var categories = _provider.DatabaseContext.Query<CategoryModel>("SELECT * FROM Categories").ToList();
 			return categories;
 		}
 
@@ -28,21 +28,21 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 		{
 			if(!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
-			return db.FirstOrDefault<CategoryModel>("WHERE id = @0", id);
+			return db.FirstOrDefault<CategoryModel>("WHERE Id = @0", id);
 		}
 
 		public CategoryModel GetCategoryByName(string name)
 		{
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
-			return db.FirstOrDefault<CategoryModel>("WHERE name = @0", name);
+			return db.FirstOrDefault<CategoryModel>("WHERE Name = @0", name);
 		}
 
 		public int InsertCategory(string name)
 		{
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
-			if (db.FirstOrDefault<CategoryModel>("WHERE name = @0", name) != null) throw new ItemAlreadyExistsException();
+			if (db.FirstOrDefault<CategoryModel>("WHERE Name = @0", name) != null) throw new ItemAlreadyExistsException();
 			var category = new CategoryModel(){Name = name};
 			db.Insert(category);
 			return category.Id;
@@ -52,7 +52,7 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 		{
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
-			if(db.FirstOrDefault<CategoryModel>("WHERE name = @0", category.Name) != null) throw new ItemAlreadyExistsException();
+			if(db.FirstOrDefault<CategoryModel>("WHERE Name = @0", category.Name) != null) throw new ItemAlreadyExistsException();
 			db.Insert(category);
 			return category.Id;
 		}
@@ -61,28 +61,40 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 		{
 			if(!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
-			if(db.FirstOrDefault<CategoryModel>("WHERE id = @0", category.Id) == null) throw new ItemNotFoundException();
+			if(db.FirstOrDefault<CategoryModel>("WHERE Id = @0", category.Id) == null) throw new ItemNotFoundException();
 			db.Update(category);
 		}
 
 		public void UpdateCategory(int id, string value)
 		{
-			throw new System.NotImplementedException();
+			if(!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
+			var db = _provider.DatabaseContext;
+			if(db.FirstOrDefault<CategoryModel>("WHERE Id = @0", id) == null) throw new ItemNotFoundException();
+			db.Update<CategoryModel>("SET Name = @1 WHERE Id = @0", id, value);
 		}
 
 		public void DeleteCategory(CategoryModel model)
 		{
-			throw new System.NotImplementedException();
+			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
+			var db = _provider.DatabaseContext;
+			if(db.FirstOrDefault<CategoryModel>("WHERE Id = @0", model.Id) == null) throw new ItemNotFoundException();
+			db.Delete(model);
 		}
 
 		public void DeleteCategory(int categoryId)
 		{
-			throw new System.NotImplementedException();
+			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
+			var db = _provider.DatabaseContext;
+			if(db.FirstOrDefault<CategoryModel>("WHERE Id = @0", categoryId) == null) throw new ItemNotFoundException();
+			db.Delete<CategoryModel>("WHERE Id = @0", categoryId);
 		}
 
 		public void DeleteCategory(string name)
 		{
-			throw new System.NotImplementedException();
+			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
+			var db = _provider.DatabaseContext;
+			if (db.FirstOrDefault<CategoryModel>("WHERE Name = @0", name) == null) throw new ItemNotFoundException();
+			db.Delete<CategoryModel>("WHERE Name = @0", name);
 		}
 
 		public void SetProvider(IDatabaseContextProvider provider)
