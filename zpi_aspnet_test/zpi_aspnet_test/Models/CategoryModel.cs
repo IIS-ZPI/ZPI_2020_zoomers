@@ -7,6 +7,7 @@ namespace zpi_aspnet_test.Models
    {
       [Column]
       public int Id { get; set; }
+
       [Column]
       public string Name { get; set; }
    }
