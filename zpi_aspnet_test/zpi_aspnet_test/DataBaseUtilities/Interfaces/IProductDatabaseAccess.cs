@@ -10,9 +10,9 @@ namespace zpi_aspnet_test.DataBaseUtilities.Interfaces
       ICollection<ProductModel> GetProductsFromCategory(CategoryModel model);
       ProductModel GetProductByName(string name);
 
-      void InsertProduct(ProductModel product);
-      void InsertProduct(string name, CategoryModel category, double purchasePrice = 0.0, double preferredPrice = 0.0, double finalPrice = 0.0);
-      void InsertProduct(string name, string categoryName, double purchasePrice = 0.0, double preferredPrice = 0.0, double finalPrice = 0.0);
+      int InsertProduct(ProductModel product);
+      int InsertProduct(string name, CategoryModel category, double purchasePrice = 0.0, double preferredPrice = 0.0, double finalPrice = 0.0);
+      int InsertProduct(string name, int categoryId, double purchasePrice = 0.0, double preferredPrice = 0.0, double finalPrice = 0.0);
 
       void UpdateProduct(ProductModel product);
       void UpdateProduct(int productId, CategoryModel category = null, double purchasePrice = 0.0,

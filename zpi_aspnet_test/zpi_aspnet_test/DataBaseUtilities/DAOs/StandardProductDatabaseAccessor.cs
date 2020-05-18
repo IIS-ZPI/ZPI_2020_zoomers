@@ -33,34 +33,47 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 		public ICollection<ProductModel> GetProductsFromCategory(CategoryModel model)
 		{
-			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
-			var db = _provider.DatabaseContext;
+			var collection = GetProducts();
+			return collection.Where(productModel =>
+				productModel.Category.Id == model.Id && productModel.Category.Name.Equals(model.Name)).ToList();
 		}
 
 		public ProductModel GetProductByName(string name)
 		{
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
+			return db.Query<ProductModel, CategoryModel>("SELECT * FROM Products p LEFT JOIN CATEGORIES c ON p.Category_id = c.Id WHERE Name = @0", name).FirstOrDefault();
 		}
 
-		public void InsertProduct(ProductModel product)
+		public int InsertProduct(ProductModel product)
 		{
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
+			if (db.FirstOrDefault<ProductModel>("WHERE Name = @0", product.Name) != null) throw new ItemAlreadyExistsException();
+			db.Insert(product);
+			return product.Id;
 		}
 
-		public void InsertProduct(string name, CategoryModel category, double purchasePrice = 0, double preferredPrice = 0,
+		public int InsertProduct(string name, CategoryModel category, double purchasePrice = 0, double preferredPrice = 0,
 			double finalPrice = 0)
 		{
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
+			if (db.FirstOrDefault<ProductModel>("WHERE Name = @0", name) != null) throw new ItemAlreadyExistsException();
+			var product = new ProductModel(){CategoryId = category.Id, FinalPrice = finalPrice, PreferredPrice = preferredPrice, PurchasePrice = purchasePrice, Name = name};
+			db.Insert(product);
+			return product.Id;
 		}
 
-		public void InsertProduct(string name, string categoryName, double purchasePrice = 0, double preferredPrice = 0,
+		public int InsertProduct(string name, int categoryId, double purchasePrice = 0, double preferredPrice = 0,
 			double finalPrice = 0)
 		{
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
+			if (db.FirstOrDefault<ProductModel>("WHERE Name = @0", name) != null) throw new ItemAlreadyExistsException();
+			var product = new ProductModel() { CategoryId = categoryId, FinalPrice = finalPrice, PreferredPrice = preferredPrice, PurchasePrice = purchasePrice, Name = name };
+			db.Insert(product);
+			return product.Id;
 		}
 
 		public void UpdateProduct(ProductModel product)
