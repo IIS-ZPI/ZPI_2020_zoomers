@@ -41,8 +41,7 @@ namespace zpi_aspnet_test_xpath_parser
                      break;
                   case 3:
                      var percent = childNode.InnerText.Trim();
-                     state.BaseSalesTax = double.Parse(percent.Replace('.', ',').Substring(0, percent.Length - 1)) /
-                                          100.0;
+                     state.BaseSalesTax = double.Parse(percent.Replace('.', ',').Substring(0, percent.Length - 1)) / 100.0;
                      break;
                   case 7:
                   case 9:

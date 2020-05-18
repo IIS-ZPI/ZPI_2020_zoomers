@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using zpi_aspnet_test.Enumerators;
 using zpi_aspnet_test.Models;
 
 namespace zpi_aspnet_test.Algorithms
@@ -10,7 +9,31 @@ namespace zpi_aspnet_test.Algorithms
     {
         public static void CalculateFinalPrice(ProductModel product, StateOfAmericaModel state)
         {
-            var tax = state.Rates[product.Category];
+			double tax;
+			switch ((ProductCategoryEnum)product.CategoryId)
+	         {
+		         case ProductCategoryEnum.Groceries:
+			         tax = state.Groceries;
+			         break;
+		         case ProductCategoryEnum.PreparedFood:
+			         tax = state.PreparedFood;
+			         break;
+		         case ProductCategoryEnum.PrescriptionDrug:
+			         tax = state.PrescriptionDrug;
+			         break;
+		         case ProductCategoryEnum.NonPrescriptionDrug:
+			         tax = state.NonPrescriptionDrug;
+			         break;
+		         case ProductCategoryEnum.Clothing:
+			         tax = state.Clothing;
+			         break;
+		         case ProductCategoryEnum.Intangibles:
+			         tax = state.Intangibles;
+			         break;
+		         default:
+			         throw new ArgumentOutOfRangeException();
+	         }
+            
             product.FinalPrice = product.PreferredPrice - (product.PreferredPrice * tax);
         }
 
