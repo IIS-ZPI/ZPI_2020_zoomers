@@ -15,9 +15,9 @@ namespace zpi_aspnet_test.DataBaseUtilities.Interfaces
       int InsertProduct(string name, int categoryId, double purchasePrice = 0.0, double preferredPrice = 0.0, double finalPrice = 0.0);
 
       void UpdateProduct(ProductModel product);
-      void UpdateProduct(int productId, CategoryModel category = null, double purchasePrice = 0.0,
+      void UpdateProduct(int productId, CategoryModel category, double purchasePrice = 0.0,
 	      double preferredPrice = 0.0, double finalPrice = 0.0, string productName = "");
-      void UpdateProduct(int productId, string categoryName = "", double purchasePrice = 0.0,
+      void UpdateProduct(int productId, int categoryId, double purchasePrice = 0.0,
 	      double preferredPrice = 0.0, double finalPrice = 0.0, string productName = "");
 
       void DeleteProduct(ProductModel product);

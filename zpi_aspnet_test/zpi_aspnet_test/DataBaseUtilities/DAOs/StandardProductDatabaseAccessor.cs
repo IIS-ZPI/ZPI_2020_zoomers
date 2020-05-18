@@ -80,26 +80,36 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 		{
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
+			if (db.FirstOrDefault<ProductModel>("WHERE Name = @0", product.Name) == null) throw new ItemNotFoundException();
+			db.Update(product);
 		}
 
-		public void UpdateProduct(int productId, CategoryModel category = null, double purchasePrice = 0, double preferredPrice = 0,
+		public void UpdateProduct(int productId, CategoryModel category, double purchasePrice = 0, double preferredPrice = 0,
 			double finalPrice = 0, string productName = "")
 		{
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
+			if (db.FirstOrDefault<ProductModel>("WHERE Id = @0", productId) == null) throw new ItemNotFoundException();
+			var product = new ProductModel(){Id = productId, Name = productName, CategoryId = category.Id, FinalPrice = finalPrice, PreferredPrice = preferredPrice, PurchasePrice = purchasePrice};
+			db.Update(product);
 		}
 
-		public void UpdateProduct(int productId, string categoryName = "", double purchasePrice = 0, double preferredPrice = 0,
+		public void UpdateProduct(int productId, int categoryId, double purchasePrice = 0, double preferredPrice = 0,
 			double finalPrice = 0, string productName = "")
 		{
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
+			if (db.FirstOrDefault<ProductModel>("WHERE Id = @0", productId) == null) throw new ItemNotFoundException();
+			var product = new ProductModel() { Id = productId, Name = productName, CategoryId = categoryId, FinalPrice = finalPrice, PreferredPrice = preferredPrice, PurchasePrice = purchasePrice };
+			db.Update(product);
 		}
 
 		public void DeleteProduct(ProductModel product)
 		{
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
+			if(db.FirstOrDefault<ProductModel>("WHERE Id = @0", product.Id) == null) throw new ItemNotFoundException();
+			db.Delete(product);
 		}
 
 		public void DeleteProduct(int productId)
