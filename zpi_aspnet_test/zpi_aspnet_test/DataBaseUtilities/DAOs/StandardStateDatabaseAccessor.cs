@@ -14,7 +14,7 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 		public StandardStateDatabaseAccessor()
 		{
-			_provider = DatabaseContextProvider.Instance;
+			_provider = DatabaseContextProvider.Instance ?? throw new InvalidDatabaseOperationException("Database provider is null");
 		}
 
 		public ICollection<StateOfAmericaModel> GetStates()

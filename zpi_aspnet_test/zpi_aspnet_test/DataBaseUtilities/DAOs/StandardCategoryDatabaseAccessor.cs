@@ -12,7 +12,7 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 	{
 		public StandardCategoryDatabaseAccessor()
 		{
-			_provider = DatabaseContextProvider.Instance;
+			_provider = DatabaseContextProvider.Instance ?? throw new InvalidDatabaseOperationException("Database provider is null");
 		}
 
 		private IDatabaseContextProvider _provider;
