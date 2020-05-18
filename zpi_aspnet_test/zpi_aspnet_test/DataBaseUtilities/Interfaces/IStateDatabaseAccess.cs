@@ -9,8 +9,8 @@ namespace zpi_aspnet_test.DataBaseUtilities.Interfaces
 		StateOfAmericaModel GetStateById(int id);
 		StateOfAmericaModel GetStateByName(string name);
 
-		void InsertState(StateOfAmericaModel state);
-		void InsertState(string name, double? baseSalesTax = null, double? groceries = null, double? preparedFood = null,
+		int InsertState(StateOfAmericaModel state);
+		int InsertState(string name, double? baseSalesTax = null, double? groceries = null, double? preparedFood = null,
 			double? prescriptionDrug = null, double? nonPrescriptionDrug = null, double? clothing = null,
 			double? intangibles = null);
 
