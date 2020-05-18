@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using zpi_aspnet_test.DataBaseUtilities.Exceptions;
 using zpi_aspnet_test.DataBaseUtilities.Interfaces;
 using zpi_aspnet_test.Models;
@@ -18,71 +19,86 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 		public ICollection<ProductModel> GetProducts()
 		{
-			throw new System.NotImplementedException();
+			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
+			var products = _provider.DatabaseContext.Query<ProductModel, CategoryModel>("SELECT * FROM Products p LEFT JOIN CATEGORIES c ON p.Category_id = c.Id").ToList();
+			return products;
 		}
 
 		public ProductModel GetProductById(int id)
 		{
-			throw new System.NotImplementedException();
+			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
+			var db = _provider.DatabaseContext;
+			return db.Query<ProductModel, CategoryModel>("SELECT * FROM Products p LEFT JOIN CATEGORIES c ON p.Category_id = c.Id WHERE Id = @0", id).FirstOrDefault();
 		}
 
 		public ICollection<ProductModel> GetProductsFromCategory(CategoryModel model)
 		{
-			throw new System.NotImplementedException();
+			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
+			var db = _provider.DatabaseContext;
 		}
 
 		public ProductModel GetProductByName(string name)
 		{
-			throw new System.NotImplementedException();
+			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
+			var db = _provider.DatabaseContext;
 		}
 
 		public void InsertProduct(ProductModel product)
 		{
-			throw new System.NotImplementedException();
+			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
+			var db = _provider.DatabaseContext;
 		}
 
 		public void InsertProduct(string name, CategoryModel category, double purchasePrice = 0, double preferredPrice = 0,
 			double finalPrice = 0)
 		{
-			throw new System.NotImplementedException();
+			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
+			var db = _provider.DatabaseContext;
 		}
 
 		public void InsertProduct(string name, string categoryName, double purchasePrice = 0, double preferredPrice = 0,
 			double finalPrice = 0)
 		{
-			throw new System.NotImplementedException();
+			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
+			var db = _provider.DatabaseContext;
 		}
 
 		public void UpdateProduct(ProductModel product)
 		{
-			throw new System.NotImplementedException();
+			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
+			var db = _provider.DatabaseContext;
 		}
 
 		public void UpdateProduct(int productId, CategoryModel category = null, double purchasePrice = 0, double preferredPrice = 0,
 			double finalPrice = 0, string productName = "")
 		{
-			throw new System.NotImplementedException();
+			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
+			var db = _provider.DatabaseContext;
 		}
 
 		public void UpdateProduct(int productId, string categoryName = "", double purchasePrice = 0, double preferredPrice = 0,
 			double finalPrice = 0, string productName = "")
 		{
-			throw new System.NotImplementedException();
+			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
+			var db = _provider.DatabaseContext;
 		}
 
 		public void DeleteProduct(ProductModel product)
 		{
-			throw new System.NotImplementedException();
+			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
+			var db = _provider.DatabaseContext;
 		}
 
 		public void DeleteProduct(int productId)
 		{
-			throw new System.NotImplementedException();
+			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
+			var db = _provider.DatabaseContext;
 		}
 
 		public void DeleteProduct(string productName)
 		{
-			throw new System.NotImplementedException();
+			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
+			var db = _provider.DatabaseContext;
 		}
 
 		public void SetProvider(IDatabaseContextProvider provider)
