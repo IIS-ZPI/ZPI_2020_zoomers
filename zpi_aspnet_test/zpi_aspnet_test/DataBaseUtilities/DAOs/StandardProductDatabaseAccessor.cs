@@ -116,12 +116,16 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 		{
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
+			if (db.FirstOrDefault<ProductModel>("WHERE Id = @0", productId) == null) throw new ItemNotFoundException();
+			db.Delete<ProductModel>("WHERE Id = @0", productId);
 		}
 
 		public void DeleteProduct(string productName)
 		{
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
+			if (db.FirstOrDefault<ProductModel>("WHERE Name = @0", productName) == null) throw new ItemNotFoundException();
+			db.Delete<ProductModel>("WHERE Name = @0", productName);
 		}
 
 		public void SetProvider(IDatabaseContextProvider provider)
