@@ -2,8 +2,6 @@
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using zpi_aspnet_test.Enumerators;
-using zpi_aspnet_test.Models;
 using zpi_aspnet_test_xpath_parser;
 
 namespace zpi_aspnet_test.Tests.Feature_Parser.Tests
@@ -12,23 +10,20 @@ namespace zpi_aspnet_test.Tests.Feature_Parser.Tests
    public class ParserTestsScenario
    {
 
-      private int CountOfStates;
-      private List<ProductCategoryEnum> Categories;
-      private List<double> AlaskaTaxRates;
+      private int _countOfStates;
+      private List<double> _alaskaTaxRates;
 
       [TestInitialize]
       public void Setup()
       {
-         AlaskaTaxRates = new List<double>{0,0,0,0,0,0};
-         CountOfStates = 53;
-         Categories = new List<ProductCategoryEnum>((ProductCategoryEnum[])Enum.GetValues(typeof(ProductCategoryEnum)));
+         _alaskaTaxRates = new List<double>{0,0,0,0,0,0};
+         _countOfStates = 53;
       }
 
       [TestMethod]
       public void TestIfCollectionReturnedByParserIsNotNull()
       {
          var collection = Parser.GetStatesModelsFromWikipedia();
-
          Assert.IsNotNull(collection);
       }
 
@@ -37,27 +32,36 @@ namespace zpi_aspnet_test.Tests.Feature_Parser.Tests
       {
          var collection = Parser.GetStatesModelsFromWikipedia();
 
-         Assert.AreEqual(CountOfStates, collection.Count);
+         Assert.AreEqual(_countOfStates, collection.Count);
       }
 
       [TestMethod]
-      public void TestGuamDoesntHaveSalesTaxRateForIntangibles()
+      public void TestGuamDoesNotHaveSalesTaxRateForIntangibles()
       {
          var collection = Parser.GetStatesModelsFromWikipedia();
-         var Guam = collection.First(model => model.Name.Equals("Guam"));
+         var guam = collection.First(model => model.Name.Equals("Guam"));
 
-         Assert.IsNotNull(Guam);
-         Assert.IsFalse(Guam.Rates.Keys.SequenceEqual(Categories));
+         Assert.IsNotNull(guam);
+         Assert.IsFalse(Math.Abs(guam.Intangibles) > 0.00001);
       }
 
       [TestMethod]
       public void TestValuesOfAlaskaSalesTaxRates()
       {
          var collection = Parser.GetStatesModelsFromWikipedia();
-         var Alaska = collection.First(model => model.Name.Equals("Alaska"));
+         var alaska = collection.First(model => model.Name.Equals("Alaska"));
 
-         Assert.IsNotNull(Alaska);
-         Assert.IsTrue(Alaska.Rates.Values.SequenceEqual(AlaskaTaxRates));
+         Assert.IsNotNull(alaska);
+         var rates = new List<double>
+         {
+            alaska.Clothing,
+            alaska.Groceries,
+            alaska.Intangibles,
+            alaska.NonPrescriptionDrug,
+            alaska.PreparedFood,
+            alaska.PrescriptionDrug
+         };
+         Assert.IsTrue(rates.SequenceEqual(_alaskaTaxRates));
       }
    }
 }
