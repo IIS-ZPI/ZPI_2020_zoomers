@@ -10,10 +10,10 @@
     { 
         <div class="form-group">
             <label class="" for="selectProduct">Product:</label>
-            @Html.DropDownList("product", Model.ProductSelectList, "Select Product", new {@class = "form-control"})
+            @Html.DropDownList("product", Model.ProductSelectList, "Select Product", new {@class = "form-control", @required = true})
         </div>
         <div class="form-group">
-            <input type="number" step="0.01" class="form-control" id="priceInput" name="preferredPriceInput" placeholder="Preferred Price"/>
+            <input type="number" step="0.01" class="form-control" id="priceInput" name="preferredPriceInput" placeholder="Preferred Price" required/>
         </div>
         <div class="form-group">
             <input type="submit" class="btn btn-default" value="Submit"/>
@@ -30,9 +30,9 @@
                 <th scope="col">State</th>
                 <th scope="col">Tax</th>
                 <th scope="col">Purchase Price</th>
-                <th scope="col">Preferred Price</th>
-                <th scope="col">Final Price</th>
-                <th scope="col">Margin</th>
+                <th scope="col">Preferred Price (without tax)</th>
+                <th scope="col">Final Price (with tax)</th>
+                <th scope="col">Profit margin</th>
             </tr>
             @for (int i = 0; i < Model.StateNameList.Count; i++)
             {
