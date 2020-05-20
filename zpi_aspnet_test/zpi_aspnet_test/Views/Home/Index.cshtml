@@ -1,5 +1,4 @@
-﻿@model zpi_aspnet_test.Models.ProductModel
-
+﻿@model zpi_aspnet_test.Models.MainViewModel
 @{
     ViewBag.Title = "Home Page";
 }
@@ -7,31 +6,47 @@
 <asp:DropDownList runat="server" CssClass="form-control" ID="something" />
 
 <div class="row" style="margin-top: 10px">
-    <form class="form-inline col-md-12">
+    @using (Html.BeginForm("Index", "Home", FormMethod.Post, new { @class="form-inline col-md-12", role="form" }))
+    { 
         <div class="form-group">
             <label class="" for="selectProduct">Product:</label>
-            @Html.DropDownList("ProductDropDown", Model.ProductList, "Select Product", new{ @class = "form-control" })
+            @Html.DropDownList("product", Model.ProductSelectList, "Select Product", new {@class = "form-control"})
         </div>
         <div class="form-group">
-            <input type="text" class="form-control" id="preferredPriceInput" placeholder="Preferred Price">
+            <input type="number" step="0.01" class="form-control" id="priceInput" name="preferredPriceInput" placeholder="Preferred Price"/>
         </div>
         <div class="form-group">
-            <button type="submit" class="btn btn-default">Submit</button>
+            <input type="submit" class="btn btn-default" value="Submit"/>
         </div>
-    </form>
+    }
 </div>
-
-<div class="row" style="margin-top: 10px">
-    <table class="table">
-        <thead>
+@if (Model.ShowTable)
+{
+    <div class="row" style="margin-top: 10px">
+        <table class="table">
+            <thead>
             <tr>
                 <th scope="col">#</th>
                 <th scope="col">State</th>
+                <th scope="col">Tax</th>
                 <th scope="col">Purchase Price</th>
                 <th scope="col">Preferred Price</th>
                 <th scope="col">Final Price</th>
                 <th scope="col">Margin</th>
             </tr>
-        </thead>
-    </table>
-</div>
+            @for (int i = 0; i < Model.StateNameList.Count; i++)
+            {
+                <tr>
+                    <td>@(i+1)</td>
+                    <td>@Model.StateNameList[@i]</td>
+                    <td>@Model.Tax[@i]%</td>
+                    <td>@Model.PurchasePrice</td>
+                    <td>@Model.PreferredPrice</td>
+                    <td>@Model.FinalPrice[@i]</td>
+                    <td>@Model.Margin[@i]</td>
+                </tr>
+            }
+            </thead>
+        </table>
+    </div>
+}
