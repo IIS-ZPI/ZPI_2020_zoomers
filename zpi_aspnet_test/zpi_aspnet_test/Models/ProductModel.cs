@@ -29,10 +29,7 @@ namespace zpi_aspnet_test.Models
 		  [PetaPoco.Column]
 		  public double FinalPrice { get; set; }
 
-		  [PetaPoco.Ignore]
-		  public SelectList ProductList { get; set; }
-
-		  public override string ToString()
+          public override string ToString()
 		  {
 				var builder = new StringBuilder();
 				builder.Append("------------------------------------\n");
