@@ -42,7 +42,7 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 		{
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
-			return db.Query<ProductModel, CategoryModel>("SELECT * FROM Products p LEFT JOIN CATEGORIES c ON p.Category_id = c.Id WHERE Name = @0", name).FirstOrDefault();
+			return db.Query<ProductModel, CategoryModel>("SELECT * FROM Products p LEFT JOIN CATEGORIES c ON p.Category_id = c.Id WHERE p.Name = @0", name).FirstOrDefault();
 		}
 
 		public int InsertProduct(ProductModel product)

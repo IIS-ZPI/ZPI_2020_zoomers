@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Text;
+using System.Web.Mvc;
 using PetaPoco;
 
 namespace zpi_aspnet_test.Models
@@ -9,25 +11,25 @@ namespace zpi_aspnet_test.Models
 		  [ResultColumn]
 		  public CategoryModel Category { get; set; }
 
-		  [Column]
+		  [PetaPoco.Column]
 		  public int Id { get; set; }
 
-		  [Column("Category_id")]
+		  [PetaPoco.Column("Category_id")]
 		  public int CategoryId { get; set; }
 
-		  [Column]
+		  [PetaPoco.Column]
 		  public string Name { get; set; }
 
-		  [Column]
+		  [PetaPoco.Column]
 		  public double PurchasePrice { get; set; }
 
-		  [Column]
+		  [PetaPoco.Column]
 		  public double PreferredPrice { get; set; }
 
-		  [Column]
+		  [PetaPoco.Column]
 		  public double FinalPrice { get; set; }
 
-		  public override string ToString()
+          public override string ToString()
 		  {
 				var builder = new StringBuilder();
 				builder.Append("------------------------------------\n");
