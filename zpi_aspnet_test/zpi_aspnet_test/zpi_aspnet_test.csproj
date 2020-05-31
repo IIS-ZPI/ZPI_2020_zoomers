@@ -125,7 +125,10 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\CategorySelectionController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ProductSelectionController.cs" />
+    <Compile Include="Controllers\StateSelectionController.cs" />
     <Compile Include="DataBaseUtilities\DAOs\StandardCategoryDatabaseAccessor.cs" />
     <Compile Include="DataBaseUtilities\DAOs\StandardProductDatabaseAccessor.cs" />
     <Compile Include="DataBaseUtilities\DAOs\StandardStateDatabaseAccessor.cs" />
@@ -186,6 +189,10 @@
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\CategorySelection\Index.cshtml" />
+    <Content Include="Views\ProductSelection\Index.cshtml" />
+    <Content Include="Views\Shared\_FormsView.cshtml" />
+    <Content Include="Views\StateSelection\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
