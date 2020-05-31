@@ -7,11 +7,11 @@ namespace zpi_aspnet_test.Algorithms
 {
     public class Algorithm
     {
-        public static void CalculateFinalPrice(ProductModel product, StateOfAmericaModel state)
+        public static void CalculateFinalPrice(ProductModel product, StateOfAmericaModel state, int numberOfProducts)
         {
 			double tax = GetTax(product, state);
             
-            product.FinalPrice = Math.Round(product.PreferredPrice - (product.PreferredPrice * (tax / 100)), 2);
+            product.FinalPrice = (Math.Round(product.PreferredPrice - (product.PreferredPrice * (tax / 100)), 2)) * numberOfProducts;
         }
 
         public static double GetTax(ProductModel product, StateOfAmericaModel state)
@@ -42,14 +42,14 @@ namespace zpi_aspnet_test.Algorithms
                     throw new ArgumentOutOfRangeException();
             }
 
-            return tax;
+            return Math.Round(tax, 3);
         }
 
-        public static void SetFinalPrices(ProductModel product, List<StateOfAmericaModel> states)
+        public static void SetFinalPrices(ProductModel product, List<StateOfAmericaModel> states, int numberOfProducts)
         {
             foreach (var state in states)
             {
-                CalculateFinalPrice(product, state);
+                CalculateFinalPrice(product, state, numberOfProducts);
             }
         }
 
