@@ -5,99 +5,12 @@
 
 <asp:DropDownList runat="server" CssClass="form-control" ID="something" />
 
-
-<ul class="nav nav-tabs">
-    <li class="active"><a data-togle="tab" href="#byProduct">By product</a></li>
-    <li><a data-togle="tab" href="#byCategory">By category</a></li>
-    <li><a data-togle="tab" href="#byState">By state</a></li>
-</ul>
-
-<div class="tab-content">
-    <div id="byProduct" class="row tab-pane fade in active" style="margin-top: 10px">
-        @using (Html.BeginForm("Index", "Home", FormMethod.Post, new { @class = "form-inline col-md-12", role = "form" }))
-        {
-            <div class="form-group">
-                <label class="" for="selectProduct">Product:</label>
-                @Html.DropDownList("product", Model.ProductSelectList, "Select Product", new { @class = "form-control", @required = true })
-            </div>
-            <div class="form-group">
-                <input type="number" step="0.01" class="form-control" id="priceInput" name="preferredPriceInput" placeholder="Preferred Price" required />
-            </div>
-            <div class="form-group">
-                <input type="submit" class="btn btn-default" value="Submit" />
-            </div>
-        }
-    </div>
-
-    <div id="byCategory" class="row tab-pane fade" style="margin-top: 10px">
-        @using (Html.BeginForm("Index", "Home", FormMethod.Post, new { @class = "form-inline col-md-12", role = "form" }))
-        {
-            <div class="form-group">
-                <label class="" for="selectProduct">Product:</label>
-                @Html.DropDownList("product", Model.ProductSelectList, "Select Product", new { @class = "form-control", @required = true })
-            </div>
-            <div class="form-group">
-                <input type="number" step="0.01" class="form-control" id="priceInput" name="preferredPriceInput" placeholder="Preferred Price" required />
-            </div>
-            <div class="form-group">
-                <input type="submit" class="btn btn-default" value="Submit" />
-            </div>
-        }
-    </div>
-
-    <div id="byState" class="row tab-pane fade" style="margin-top: 10px">
-        @using (Html.BeginForm("Index", "Home", FormMethod.Post, new { @class = "form-inline col-md-12", role = "form" }))
-        {
-            <div class="form-group">
-                <label class="" for="selectProduct">Product:</label>
-                @Html.DropDownList("product", Model.ProductSelectList, "Select Product", new { @class = "form-control", @required = true })
-            </div>
-            <div class="form-group">
-                <input type="number" step="0.01" class="form-control" id="priceInput" name="preferredPriceInput" placeholder="Preferred Price" required />
-            </div>
-            <div class="form-group">
-                <input type="submit" class="btn btn-default" value="Submit" />
-            </div>
-        }
-    </div>
-
-</div>
-
-@if (Model.ShowTable)
-{
-    <div class="row" style="margin-top: 10px">
-        <table class="table">
-            <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">State</th>
-                <th scope="col">Tax</th>
-                <th scope="col">Purchase Price</th>
-                <th scope="col">Preferred Price (with tax)</th>
-                <th scope="col">Final Price (without tax)</th>
-                <th scope="col">Profit margin</th>
-            </tr>
-            @for (int i = 0; i < Model.StateNameList.Count; i++)
-            {
-                <tr>
-                    <td>@(i+1)</td>
-                    <td>@Model.StateNameList[@i]</td>
-                    <td>@Model.Tax[@i]%</td>
-                    <td>@Model.PurchasePrice$</td>
-                    <td>@Model.PreferredPrice$</td>
-                    <td>@Model.FinalPrice[@i]$</td>
-                    <td>@Model.Margin[@i]$</td>
-                </tr>
-            }
-            </thead>
-        </table>
-    </div>
-}
+@Html.Partial("_FormsView")
 
 @section scripts
 {
     <script>
-        $('.nav-tabs a').click(function(){
+        $('.nav-tabs a').click(function () {
             $(this).tab('show');
         })
     </script>
