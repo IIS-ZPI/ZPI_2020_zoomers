@@ -17,6 +17,7 @@ namespace zpi_aspnet_test.Tests
 		private ProductModel _product;
 		private ProductModel _invalidProduct;
 		private const int InvalidId = -1;
+
 		[TestInitialize]
 		public void Setup()
 		{
