@@ -15,13 +15,18 @@ namespace zpi_aspnet_test.Tests
 	{
 		private StateOfAmericaModel _state;
 		private ProductModel _product;
+		private const double PreferredPrice = 12.0;
 		private ProductModel _invalidProduct;
 		private const int InvalidId = -1;
 
 		[TestInitialize]
 		public void Setup()
 		{
-			_state = new StateOfAmericaModel();
+			_state = new StateOfAmericaModel
+			{
+				Clothing = 0.0
+			};
+
 			_product = new ProductModel
 			{
 				CategoryId = (int)ProductCategoryEnum.Clothing
@@ -31,6 +36,8 @@ namespace zpi_aspnet_test.Tests
 			{
 				CategoryId = InvalidId
 			};
+
+
 		}
 
 		[TestMethod]
@@ -57,5 +64,18 @@ namespace zpi_aspnet_test.Tests
 			Assert.That(CallingGetTaxMethodWithPassedProductInstanceHavingIncorrectCategoryId, Throws.An<ArgumentOutOfRangeException>());
 		}
 
+		[TestMethod]
+		public void ApplyingTaxThatValueEqualsZeroShouldResultInFinalPriceThatIsEqualToPreferredPriceOfProductAfterThatCalculateFinalPriceIsCalled()
+		{
+			var productWithPreferredPrice = new ProductModel
+			{
+				CategoryId = (int)ProductCategoryEnum.Clothing,
+				PreferredPrice = PreferredPrice
+			};
+
+			void StandardCalculateFinalPriceCall() => Algorithm.CalculateFinalPrice(productWithPreferredPrice, _state);
+
+			Assert.That(StandardCalculateFinalPriceCall, Not(Throws.An<Exception>()));
+		}
 	}
 }
