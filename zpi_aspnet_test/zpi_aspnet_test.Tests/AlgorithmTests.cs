@@ -15,6 +15,8 @@ namespace zpi_aspnet_test.Tests
 	{
 		private StateOfAmericaModel _state;
 		private ProductModel _product;
+		private ProductModel _invalidProduct;
+		private const int InvalidId = -1;
 		[TestInitialize]
 		public void Setup()
 		{
@@ -22,6 +24,11 @@ namespace zpi_aspnet_test.Tests
 			_product = new ProductModel
 			{
 				CategoryId = (int)ProductCategoryEnum.Clothing
+			};
+
+			_invalidProduct = new ProductModel
+			{
+				CategoryId = InvalidId
 			};
 		}
 
@@ -35,6 +42,12 @@ namespace zpi_aspnet_test.Tests
 		public void CalculateFinalPriceShouldThrowNullReferenceExceptionIfProvidedStateIsNull()
 		{
 			Assert.That(() => Algorithm.CalculateFinalPrice(_product, null), Throws.An<NullReferenceException>());
+		}
+
+		[TestMethod]
+		public void GetTaxShouldThrowArgumentOutOfRangeExceptionIfProvidedCategoryIdIsIncorrect()
+		{
+			Assert.That(() => Algorithm.CalculateFinalPrice(_invalidProduct, null), Throws.An<ArgumentOutOfRangeException>());
 		}
 
 	}
