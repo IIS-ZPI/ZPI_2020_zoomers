@@ -1,30 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
-using System.Web;
-using zpi_aspnet_test.Enumerators;
+using System.Web.Mvc;
+using PetaPoco;
 
 namespace zpi_aspnet_test.Models
 {
-    public class ProductModel
-    {
-        public ProductCategoryEnum Category { get; set; }
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public double PurchasePrice { get; set; }
-        public double BasePrice { get; set; }
-        public double FinalPrice { get; set; }
+	[TableName("Products"), PrimaryKey("Id")]
+	public class ProductModel
+	{
+		  [ResultColumn]
+		  public CategoryModel Category { get; set; }
 
-        public override string ToString()
-        {
-            StringBuilder builder = new StringBuilder();
-            builder.Append("------------------------------------\n");
-            builder.Append($"Category: {Category}, ID: {Id}, Name: {Name}, Purchase price: {PurchasePrice}," +
-                           $"Base price: {BasePrice}, Final price: {FinalPrice}\n");
-            builder.Append("------------------------------------\n");
+		  [PetaPoco.Column]
+		  public int Id { get; set; }
 
-            return builder.ToString();
-        }
-    }
+		  [PetaPoco.Column("Category_id")]
+		  public int CategoryId { get; set; }
+
+		  [PetaPoco.Column]
+		  public string Name { get; set; }
+
+		  [PetaPoco.Column]
+		  public double PurchasePrice { get; set; }
+
+		  [PetaPoco.Column]
+		  public double PreferredPrice { get; set; }
+
+		  [PetaPoco.Column]
+		  public double FinalPrice { get; set; }
+
+          public override string ToString()
+		  {
+				var builder = new StringBuilder();
+				builder.Append("------------------------------------\n");
+				builder.Append($"Category: {Category.Name}, ID: {Id}, Name: {Name}, Purchase price: {PurchasePrice}," +
+									$"Preferred price: {PreferredPrice}, Final price: {FinalPrice}\n");
+				builder.Append("------------------------------------\n");
+
+				return builder.ToString();
+		  }
+	}
 }

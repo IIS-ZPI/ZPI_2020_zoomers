@@ -2,6 +2,6 @@
 {
    public enum ProductCategoryEnum
    {
-      Groceries, PreparedFood, PrescriptionDrug, NonPrescriptionDrug, Clothing, Intangibles
+      Groceries=1, PreparedFood, PrescriptionDrug, NonPrescriptionDrug, Clothing, Intangibles
    }
 }
