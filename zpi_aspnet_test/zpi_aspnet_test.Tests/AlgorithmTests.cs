@@ -36,19 +36,25 @@ namespace zpi_aspnet_test.Tests
 		[TestMethod]
 		public void CalculateFinalPriceShouldThrowNullReferenceExceptionIfProvidedProductIsNull()
 		{
-			Assert.That(() => Algorithm.CalculateFinalPrice(null, _state), Throws.An<NullReferenceException>());
+			void CallingCalculateFinalPriceWithPassedNullProductModel() => Algorithm.CalculateFinalPrice(null, _state);
+
+			Assert.That(CallingCalculateFinalPriceWithPassedNullProductModel, Throws.An<NullReferenceException>());
 		}
 
 		[TestMethod]
 		public void CalculateFinalPriceShouldThrowNullReferenceExceptionIfProvidedStateIsNull()
 		{
-			Assert.That(() => Algorithm.CalculateFinalPrice(_product, null), Throws.An<NullReferenceException>());
+			void CallingCalculateFinalPriceWithPassedNullStateModel() => Algorithm.CalculateFinalPrice(_product, null);
+
+			Assert.That(CallingCalculateFinalPriceWithPassedNullStateModel, Throws.An<NullReferenceException>());
 		}
 
 		[TestMethod]
 		public void GetTaxShouldThrowArgumentOutOfRangeExceptionIfProvidedCategoryIdIsIncorrect()
 		{
-			Assert.That(() => Algorithm.CalculateFinalPrice(_invalidProduct, null), Throws.An<ArgumentOutOfRangeException>());
+			void CallingGetTaxMethodWithPassedProductInstanceHavingIncorrectCategoryId() => Algorithm.CalculateFinalPrice(_invalidProduct, null);
+
+			Assert.That(CallingGetTaxMethodWithPassedProductInstanceHavingIncorrectCategoryId, Throws.An<ArgumentOutOfRangeException>());
 		}
 
 	}
