@@ -9,7 +9,7 @@ namespace zpi_aspnet_test.Algorithms
     {
         public static void CalculateFinalPrice(ProductModel product, StateOfAmericaModel state, int numberOfProducts)
         {
-			double tax = GetTax(product, state);
+				double tax = GetTax(product, state);
             
             product.FinalPrice = (Math.Round(product.PreferredPrice - (product.PreferredPrice * (tax / 100)), 2)) * numberOfProducts;
         }
