@@ -100,7 +100,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AlgorithmTests.cs" />
+    <Compile Include="DoesNotThrow.cs" />
     <Compile Include="Feature_Parser.Tests\ParserTestsScenario.cs" />
+    <Compile Include="DoesNotThrowMatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Controllers\HomeControllerTest.cs" />
   </ItemGroup>

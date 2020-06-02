@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NHamcrest;
 using NHamcrest.Core;
 using zpi_aspnet_test.Algorithms;
 using zpi_aspnet_test.Enumerators;
@@ -75,7 +76,10 @@ namespace zpi_aspnet_test.Tests
 
 			void StandardCalculateFinalPriceCall() => Algorithm.CalculateFinalPrice(productWithPreferredPrice, _state);
 
-			Assert.That(StandardCalculateFinalPriceCall, Not(Throws.An<Exception>()));
+			Assert.That(StandardCalculateFinalPriceCall,DoesNotThrow.An<ArgumentOutOfRangeException>());
+			var finalPrice = productWithPreferredPrice.FinalPrice;
+			Assert.That(finalPrice, Is.EqualTo(PreferredPrice));
 		}
+
 	}
 }
