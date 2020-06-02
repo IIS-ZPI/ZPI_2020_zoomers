@@ -75,7 +75,7 @@ namespace zpi_aspnet_test.Controllers
 
         public ActionResult About()
         {
-            ViewBag.Message = "Your application description page.";
+            ViewBag.Message = "We are zoomers.";
 
             return View();
         }
