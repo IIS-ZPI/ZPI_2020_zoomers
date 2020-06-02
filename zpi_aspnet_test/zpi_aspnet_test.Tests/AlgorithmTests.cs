@@ -37,8 +37,7 @@ namespace zpi_aspnet_test.Tests
 			{
 				CategoryId = InvalidId
 			};
-
-
+			
 		}
 
 		[TestMethod]
@@ -79,6 +78,21 @@ namespace zpi_aspnet_test.Tests
 			Assert.That(StandardCalculateFinalPriceCall,DoesNotThrow.An<ArgumentOutOfRangeException>());
 			var finalPrice = productWithPreferredPrice.FinalPrice;
 			Assert.That(finalPrice, Is.EqualTo(PreferredPrice));
+		}
+
+		[TestMethod]
+		public void IfProductFinalPriceIsLesserThanPurchasePriceCalculateMarginShouldReturnNegativeValue()
+		{
+			var productWithFinalPriceLesserThanPurchasePrice = new ProductModel
+			{
+				CategoryId = (int)ProductCategoryEnum.Groceries,
+				PurchasePrice = 2137,
+				FinalPrice = 1488,
+			};
+
+			var margin = Algorithm.CalculateMargin(productWithFinalPriceLesserThanPurchasePrice);
+
+			Assert.That(margin, Is.LessThan(0.0));
 		}
 
 	}

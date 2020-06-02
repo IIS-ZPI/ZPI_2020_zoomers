@@ -6,8 +6,7 @@ namespace zpi_aspnet_test.Tests
 {
 	public class DoesNotThrowMatcher<T> : DiagnosingMatcher<Action> where T : Exception
 	{
-		private Func<Exception, bool> _predicate = e => !(e is T exception);
-
+		private Func<Exception, bool> _predicate = e => !(e is T);
 
 		protected override bool Matches(Action action, IDescription mismatchDescription)
 		{
