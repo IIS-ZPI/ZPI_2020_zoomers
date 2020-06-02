@@ -44,7 +44,7 @@ namespace zpi_aspnet_test.Tests
 		[TestMethod]
 		public void CalculateFinalPriceShouldThrowNullReferenceExceptionIfProvidedProductIsNull()
 		{
-			void CallingCalculateFinalPriceWithPassedNullProductModel() => Algorithm.CalculateFinalPrice(null, _state);
+			void CallingCalculateFinalPriceWithPassedNullProductModel() => Algorithm.CalculateFinalPrice(null, _state, 1);
 
 			Assert.That(CallingCalculateFinalPriceWithPassedNullProductModel, Throws.An<NullReferenceException>());
 		}
@@ -52,7 +52,7 @@ namespace zpi_aspnet_test.Tests
 		[TestMethod]
 		public void CalculateFinalPriceShouldThrowNullReferenceExceptionIfProvidedStateIsNull()
 		{
-			void CallingCalculateFinalPriceWithPassedNullStateModel() => Algorithm.CalculateFinalPrice(_product, null);
+			void CallingCalculateFinalPriceWithPassedNullStateModel() => Algorithm.CalculateFinalPrice(_product, null, 1);
 
 			Assert.That(CallingCalculateFinalPriceWithPassedNullStateModel, Throws.An<NullReferenceException>());
 		}
@@ -60,7 +60,7 @@ namespace zpi_aspnet_test.Tests
 		[TestMethod]
 		public void GetTaxShouldThrowArgumentOutOfRangeExceptionIfProvidedCategoryIdIsIncorrect()
 		{
-			void CallingGetTaxMethodWithPassedProductInstanceHavingIncorrectCategoryId() => Algorithm.CalculateFinalPrice(_invalidProduct, null);
+			void CallingGetTaxMethodWithPassedProductInstanceHavingIncorrectCategoryId() => Algorithm.CalculateFinalPrice(_invalidProduct, null, 1);
 
 			Assert.That(CallingGetTaxMethodWithPassedProductInstanceHavingIncorrectCategoryId, Throws.An<ArgumentOutOfRangeException>());
 		}
@@ -72,7 +72,7 @@ namespace zpi_aspnet_test.Tests
 				.WithCategoryId((int)ProductCategoryEnum.Clothing).WithPreferredPrice(PreferredPrice)
 				.Build();
 
-			void StandardCalculateFinalPriceCall() => Algorithm.CalculateFinalPrice(productWithPreferredPrice, _state);
+			void StandardCalculateFinalPriceCall() => Algorithm.CalculateFinalPrice(productWithPreferredPrice, _state, 1);
 
 			Assert.That(StandardCalculateFinalPriceCall,DoesNotThrow.An<ArgumentOutOfRangeException>());
 			var finalPrice = productWithPreferredPrice.FinalPrice;
@@ -98,7 +98,7 @@ namespace zpi_aspnet_test.Tests
 			var product = Product().WithCategoryId((int) ProductCategoryEnum.Clothing).WithPurchasePrice(20)
 				.WithPreferredPrice(PreferredPriceOf40).Build();
 			
-			void StandardCalculateFinalPriceCall() => Algorithm.CalculateFinalPrice(product, state);
+			void StandardCalculateFinalPriceCall() => Algorithm.CalculateFinalPrice(product, state, 1);
 			Assert.That(StandardCalculateFinalPriceCall, DoesNotThrow.An<ArgumentOutOfRangeException>());
 
 			var finalPrice = product.FinalPrice;
