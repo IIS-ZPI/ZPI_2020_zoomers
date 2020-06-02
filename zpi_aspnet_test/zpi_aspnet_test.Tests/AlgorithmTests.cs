@@ -1,13 +1,19 @@
 ﻿using System;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using NHamcrest;
 using NHamcrest.Core;
+
 using zpi_aspnet_test.Algorithms;
 using zpi_aspnet_test.Enumerators;
 using zpi_aspnet_test.Models;
+
 using Assert = NHamcrest.XUnit.Assert;
+
 using static zpi_aspnet_test.Tests.Builders.ProductBuilder;
 using static zpi_aspnet_test.Tests.Builders.StateBuilder;
+
 namespace zpi_aspnet_test.Tests
 {
 	/// <summary>
@@ -19,6 +25,8 @@ namespace zpi_aspnet_test.Tests
 		private StateOfAmericaModel _state;
 		private ProductModel _product;
 		private const double PreferredPrice = 12.0;
+		private const double PreferredPriceOf40 = 40.0;
+		private const double FinalPriceOf36 = 36.0;
 		private ProductModel _invalidProduct;
 		private const int InvalidId = -1;
 
@@ -83,5 +91,18 @@ namespace zpi_aspnet_test.Tests
 			Assert.That(margin, Is.LessThan(0.0));
 		}
 
+		[TestMethod]
+		public void CalculateFinalPriceShouldUpdateProperlyFinalPriceOfProduct()
+		{
+			var state = State().WithClothingTaxRate(10).Build();
+			var product = Product().WithCategoryId((int) ProductCategoryEnum.Clothing).WithPurchasePrice(20)
+				.WithPreferredPrice(PreferredPriceOf40).Build();
+			
+			void StandardCalculateFinalPriceCall() => Algorithm.CalculateFinalPrice(product, state);
+			Assert.That(StandardCalculateFinalPriceCall, DoesNotThrow.An<ArgumentOutOfRangeException>());
+
+			var finalPrice = product.FinalPrice;
+			Assert.That(finalPrice, Is.EqualTo(FinalPriceOf36));
+		}
 	}
 }
