@@ -16,6 +16,8 @@ namespace zpi_aspnet_test.Models
 
         public ProductModel ChosenProduct { get; set; }
 
+        public StateOfAmericaModel ChosenState { get; set; }
+
         public List<string> StateNameList { get; set; }
 
         public List<ProductModel> ProductList { get; set; }
