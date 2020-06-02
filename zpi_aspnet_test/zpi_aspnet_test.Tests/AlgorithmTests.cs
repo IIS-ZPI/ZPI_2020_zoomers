@@ -6,6 +6,8 @@ using zpi_aspnet_test.Algorithms;
 using zpi_aspnet_test.Enumerators;
 using zpi_aspnet_test.Models;
 using Assert = NHamcrest.XUnit.Assert;
+using static zpi_aspnet_test.Tests.Builders.ProductBuilder;
+using static zpi_aspnet_test.Tests.Builders.StateBuilder;
 namespace zpi_aspnet_test.Tests
 {
 	/// <summary>
@@ -23,21 +25,12 @@ namespace zpi_aspnet_test.Tests
 		[TestInitialize]
 		public void Setup()
 		{
-			_state = new StateOfAmericaModel
-			{
-				Clothing = 0.0
-			};
+			_state = State().WithClothingTaxRate(0.0).Build();
 
-			_product = new ProductModel
-			{
-				CategoryId = (int)ProductCategoryEnum.Clothing
-			};
+			_product = Product().WithCategoryId((int) ProductCategoryEnum.Clothing).Build();
 
-			_invalidProduct = new ProductModel
-			{
-				CategoryId = InvalidId
-			};
-			
+			_invalidProduct = Product().WithCategoryId(InvalidId).Build();
+
 		}
 
 		[TestMethod]
@@ -67,11 +60,9 @@ namespace zpi_aspnet_test.Tests
 		[TestMethod]
 		public void ApplyingTaxThatValueEqualsZeroShouldResultInFinalPriceThatIsEqualToPreferredPriceOfProductAfterThatCalculateFinalPriceIsCalled()
 		{
-			var productWithPreferredPrice = new ProductModel
-			{
-				CategoryId = (int)ProductCategoryEnum.Clothing,
-				PreferredPrice = PreferredPrice
-			};
+			var productWithPreferredPrice = Product()
+				.WithCategoryId((int)ProductCategoryEnum.Clothing).WithPreferredPrice(PreferredPrice)
+				.Build();
 
 			void StandardCalculateFinalPriceCall() => Algorithm.CalculateFinalPrice(productWithPreferredPrice, _state);
 
@@ -83,12 +74,9 @@ namespace zpi_aspnet_test.Tests
 		[TestMethod]
 		public void IfProductFinalPriceIsLesserThanPurchasePriceCalculateMarginShouldReturnNegativeValue()
 		{
-			var productWithFinalPriceLesserThanPurchasePrice = new ProductModel
-			{
-				CategoryId = (int)ProductCategoryEnum.Groceries,
-				PurchasePrice = 2137,
-				FinalPrice = 1488,
-			};
+			var productWithFinalPriceLesserThanPurchasePrice = Product()
+				.WithCategoryId((int) ProductCategoryEnum.Groceries).WithPurchasePrice(2137).WithFinalPrice(1488)
+				.Build();
 
 			var margin = Algorithm.CalculateMargin(productWithFinalPriceLesserThanPurchasePrice);
 
