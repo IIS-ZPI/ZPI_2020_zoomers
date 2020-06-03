@@ -34,14 +34,14 @@ namespace zpi_aspnet_test.Controllers
 
         public ActionResult About()
         {
-            ViewBag.Message = "We are zoomers.";
+            ViewBag.Message = "About this app";
 
             return View();
         }
 
         public ActionResult Contact()
         {
-            ViewBag.Message = "Your contact page.";
+            ViewBag.Message = "We are zoomers";
 
             return View();
         }
