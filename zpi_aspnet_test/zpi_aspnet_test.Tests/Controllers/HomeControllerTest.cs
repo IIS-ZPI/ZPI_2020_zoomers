@@ -35,7 +35,7 @@ namespace zpi_aspnet_test.Tests.Controllers
             ViewResult result = controller.About() as ViewResult;
 
             // Assert
-            Assert.AreEqual("About this app.", result.ViewBag.Message);
+            Assert.AreEqual("About this app", result.ViewBag.Message)
         }
 
         [TestMethod]
