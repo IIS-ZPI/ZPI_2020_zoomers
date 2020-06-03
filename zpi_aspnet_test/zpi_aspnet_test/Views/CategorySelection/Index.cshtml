@@ -1,0 +1,41 @@
+﻿@model zpi_aspnet_test.Models.MainViewModel
+@{
+    ViewBag.Title = "Category Selection";
+}
+
+<asp:DropDownList runat="server" CssClass="form-control" ID="something" />
+
+@Html.Partial("_FormsView")
+
+<div class="row" style="margin-top: 10px">
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Category</th>
+            <th scope="col">Product</th>
+            <th scope="col">Purchase Price</th>
+        </tr>
+        @for (int i = 0; i < Model.ProductList.Count; i++)
+        {
+            <tr>
+                <td>@(i+1)</td>
+                <td>@Model.Category</td>
+                <td>@Model.ProductList[i].Name</td>
+                <td>@Math.Round(Model.ProductList[i].PurchasePrice, 2)$</td>
+            </tr>
+        }
+        </thead>
+    </table>
+</div>
+
+@section scripts
+{
+    <script>
+        $('.nav-tabs a').click(function () {
+            $(this).tab('show');
+        });
+
+        $('.nav-tabs a[href="#byCategory"]').tab('show');
+    </script>
+}

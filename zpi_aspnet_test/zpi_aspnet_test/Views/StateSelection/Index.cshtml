@@ -1,0 +1,47 @@
+﻿@model zpi_aspnet_test.Models.MainViewModel
+@{
+    ViewBag.Title = "State Selection";
+}
+<asp:DropDownList runat="server" CssClass="form-control" ID="something" />
+
+@Html.Partial("_FormsView")
+
+<div class="row" style="margin-top: 10px">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">State</th>
+                <th scope="col">Product</th>
+                <th scope="col">Tax</th>
+                <th scope="col">Number Of Products</th>
+                <th scope="col">Purchase Price</th>
+                <th scope="col">Preferred Price (with tax)</th>
+                <th scope="col">Final Price (without tax)</th>
+                <th scope="col">Profit margin</th>
+            </tr>
+            <tr>
+                <td>@Model.ChosenState.Name</td>
+                <td>@Model.ChosenProduct.Name</td>
+                <td>@Model.Tax[0]%</td>
+                <td>@Model.NumberOfProducts</td>
+                <td>@(Model.PurchasePrice * Model.NumberOfProducts)$</td>
+                <td>@(Model.PreferredPrice * Model.NumberOfProducts)$</td>
+                <td>@Model.FinalPrice[0]$</td>
+                <td>@Model.Margin[0]$</td>
+
+            </tr>
+           
+        </thead>
+    </table>
+</div>
+
+@section scripts
+{
+    <script>
+        $('.nav-tabs a').click(function() {
+            $(this).tab('show');
+        });
+
+        $('.nav-tabs a[href="#byState"]').tab('show');
+    </script>
+}
