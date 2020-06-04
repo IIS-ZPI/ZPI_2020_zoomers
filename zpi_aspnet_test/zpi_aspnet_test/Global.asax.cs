@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
@@ -9,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace zpi_aspnet_test
 {
-    public class MvcApplication : System.Web.HttpApplication
+    public class MvcApplication : HttpApplication
     {
         protected void Application_Start()
         {
@@ -35,7 +34,7 @@ namespace zpi_aspnet_test
         }
     }
 
-    internal class ServiceDependencyResolver : IDependencyResolver
+    internal sealed class ServiceDependencyResolver : IDependencyResolver
     {
 	    private readonly IDependencyResolver _currentResolver;
 	    private readonly ServiceProvider _provider;
@@ -46,15 +45,9 @@ namespace zpi_aspnet_test
 		    _provider = provider;
 	    }
 
-	    public object GetService(Type serviceType)
-	    {
-		    var result = _provider.GetService(serviceType);
-		    return result;
-	    }
+	    public object GetService(Type serviceType) => _provider?.GetService(serviceType) ?? _currentResolver?.GetService(serviceType);
+	    
 
-	    public IEnumerable<object> GetServices(Type serviceType)
-	    {
-		    throw new NotImplementedException();
-	    }
+	    public IEnumerable<object> GetServices(Type serviceType) => _provider?.GetServices(serviceType) ?? _currentResolver?.GetServices(serviceType) ?? new object[0];
     }
 }
