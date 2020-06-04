@@ -19,16 +19,27 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 		public ICollection<ProductModel> GetProducts()
 		{
+			_provider.ConnectToDb();
+
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var products = _provider.DatabaseContext.Query<ProductModel, CategoryModel>("SELECT * FROM Products p LEFT JOIN CATEGORIES c ON p.Category_id = c.Id").ToList();
+
+			_provider.DisconnectFromDb();
+
 			return products;
 		}
 
 		public ProductModel GetProductById(int id)
 		{
+			_provider.ConnectToDb();
+
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
-			return db.Query<ProductModel, CategoryModel>("SELECT * FROM Products p LEFT JOIN CATEGORIES c ON p.Category_id = c.Id WHERE Id = @0", id).FirstOrDefault();
+			var rV = db.Query<ProductModel, CategoryModel>("SELECT * FROM Products p LEFT JOIN CATEGORIES c ON p.Category_id = c.Id WHERE Id = @0", id).FirstOrDefault();
+
+			_provider.DisconnectFromDb();
+			
+			return rV;
 		}
 
 		public ICollection<ProductModel> GetProductsFromCategory(CategoryModel model)
@@ -40,92 +51,137 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 		public ProductModel GetProductByName(string name)
 		{
+			_provider.ConnectToDb();
+			
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
-			return db.Query<ProductModel, CategoryModel>("SELECT * FROM Products p LEFT JOIN CATEGORIES c ON p.Category_id = c.Id WHERE p.Name = @0", name).FirstOrDefault();
+			var rV = db.Query<ProductModel, CategoryModel>("SELECT * FROM Products p LEFT JOIN CATEGORIES c ON p.Category_id = c.Id WHERE p.Name = @0", name).FirstOrDefault();
+
+			_provider.DisconnectFromDb();
+
+			return rV;
 		}
 
 		public int InsertProduct(ProductModel product)
 		{
+			_provider.DisconnectFromDb();
+
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
 			if (db.FirstOrDefault<ProductModel>("WHERE Name = @0", product.Name) != null) throw new ItemAlreadyExistsException();
 			db.Insert(product);
+
+			_provider.DisconnectFromDb();
+
 			return product.Id;
 		}
 
 		public int InsertProduct(string name, CategoryModel category, double purchasePrice = 0, double preferredPrice = 0,
 			double finalPrice = 0)
 		{
+			_provider.ConnectToDb();
+
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
 			if (db.FirstOrDefault<ProductModel>("WHERE Name = @0", name) != null) throw new ItemAlreadyExistsException();
 			var product = new ProductModel(){CategoryId = category.Id, FinalPrice = finalPrice, PreferredPrice = preferredPrice, PurchasePrice = purchasePrice, Name = name};
 			db.Insert(product);
+
+			_provider.DisconnectFromDb();
+
 			return product.Id;
 		}
 
 		public int InsertProduct(string name, int categoryId, double purchasePrice = 0, double preferredPrice = 0,
 			double finalPrice = 0)
 		{
+			_provider.ConnectToDb();
+
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
 			if (db.FirstOrDefault<ProductModel>("WHERE Name = @0", name) != null) throw new ItemAlreadyExistsException();
 			var product = new ProductModel() { CategoryId = categoryId, FinalPrice = finalPrice, PreferredPrice = preferredPrice, PurchasePrice = purchasePrice, Name = name };
 			db.Insert(product);
+
+			_provider.DisconnectFromDb();
+
 			return product.Id;
 		}
 
 		public void UpdateProduct(ProductModel product)
 		{
+			_provider.ConnectToDb();
+
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
 			if (db.FirstOrDefault<ProductModel>("WHERE Name = @0", product.Name) == null) throw new ItemNotFoundException();
 			db.Update(product);
+
+			_provider.DisconnectFromDb();
 		}
 
 		public void UpdateProduct(int productId, CategoryModel category, double purchasePrice = 0, double preferredPrice = 0,
 			double finalPrice = 0, string productName = "")
 		{
+			_provider.ConnectToDb();
+
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
 			if (db.FirstOrDefault<ProductModel>("WHERE Id = @0", productId) == null) throw new ItemNotFoundException();
 			var product = new ProductModel(){Id = productId, Name = productName, CategoryId = category.Id, FinalPrice = finalPrice, PreferredPrice = preferredPrice, PurchasePrice = purchasePrice};
 			db.Update(product);
+
+			_provider.DisconnectFromDb();
 		}
 
 		public void UpdateProduct(int productId, int categoryId, double purchasePrice = 0, double preferredPrice = 0,
 			double finalPrice = 0, string productName = "")
 		{
+			_provider.ConnectToDb();
+
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
 			if (db.FirstOrDefault<ProductModel>("WHERE Id = @0", productId) == null) throw new ItemNotFoundException();
 			var product = new ProductModel() { Id = productId, Name = productName, CategoryId = categoryId, FinalPrice = finalPrice, PreferredPrice = preferredPrice, PurchasePrice = purchasePrice };
 			db.Update(product);
+
+			_provider.DisconnectFromDb();
 		}
 
 		public void DeleteProduct(ProductModel product)
 		{
+			_provider.ConnectToDb();
+
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
 			if(db.FirstOrDefault<ProductModel>("WHERE Id = @0", product.Id) == null) throw new ItemNotFoundException();
 			db.Delete(product);
+
+			_provider.DisconnectFromDb();
 		}
 
 		public void DeleteProduct(int productId)
 		{
+			_provider.ConnectToDb();
+
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
 			if (db.FirstOrDefault<ProductModel>("WHERE Id = @0", productId) == null) throw new ItemNotFoundException();
 			db.Delete<ProductModel>("WHERE Id = @0", productId);
+
+			_provider.DisconnectFromDb();
 		}
 
 		public void DeleteProduct(string productName)
 		{
+			_provider.ConnectToDb();
+
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
 			if (db.FirstOrDefault<ProductModel>("WHERE Name = @0", productName) == null) throw new ItemNotFoundException();
 			db.Delete<ProductModel>("WHERE Name = @0", productName);
+
+			_provider.DisconnectFromDb();
 		}
 
 		public void SetProvider(IDatabaseContextProvider provider)
