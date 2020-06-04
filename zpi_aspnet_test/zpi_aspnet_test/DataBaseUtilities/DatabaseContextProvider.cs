@@ -6,6 +6,10 @@ namespace zpi_aspnet_test.DataBaseUtilities
 {
    public class DatabaseContextProvider : IDatabaseContextProvider
    {
+      public string DefaultConnectionStringId { get; }
+
+      public string CurrentConnectionStringId { get; set; }
+
       public IDatabase DatabaseContext { get; private set; }
 
       public bool Connected { get; private set; }
@@ -15,18 +19,19 @@ namespace zpi_aspnet_test.DataBaseUtilities
 
       private DatabaseContextProvider()
       {
-
+	      DefaultConnectionStringId = "zoomers_sql_server";
+	      CurrentConnectionStringId = DefaultConnectionStringId;
       }
 
       public static DatabaseContextProvider Instance => LazyInitializer.Value;
 
-      public bool ConnectToDb(string connectionStringId)
+      public bool ConnectToDb()
       {
          var rV = true;
 
          try
          {
-            DatabaseContext = new Database(connectionStringId);
+            DatabaseContext = new Database(string.IsNullOrEmpty(CurrentConnectionStringId) ? DefaultConnectionStringId : CurrentConnectionStringId);
          }
          catch (Exception exception)
          {

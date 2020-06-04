@@ -6,7 +6,9 @@ namespace zpi_aspnet_test.DataBaseUtilities.Interfaces
 	{
 		IDatabase DatabaseContext { get; }
 		bool Connected { get; }
-		bool ConnectToDb(string connectionStringId);
+		bool ConnectToDb();
 		void DisconnectFromDb();
+		string DefaultConnectionStringId { get; }
+		string CurrentConnectionStringId { get; set; }
 	}
 }
