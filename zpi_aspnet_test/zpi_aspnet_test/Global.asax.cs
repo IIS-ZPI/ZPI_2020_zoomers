@@ -5,6 +5,8 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using zpi_aspnet_test.DataBaseUtilities.DAOs;
+using zpi_aspnet_test.DataBaseUtilities.Interfaces;
 
 namespace zpi_aspnet_test
 {
@@ -30,7 +32,9 @@ namespace zpi_aspnet_test
 
         private void ConfigureServices(IServiceCollection services)
         {
-	        
+	        services.AddScoped<ICategoryDatabaseAccess>(provider => new StandardCategoryDatabaseAccessor());
+	        services.AddScoped<IStateDatabaseAccess>(provider => new StandardStateDatabaseAccessor());
+	        services.AddScoped<IProductDatabaseAccess>(provider => new StandardProductDatabaseAccessor());
         }
     }
 
@@ -48,6 +52,7 @@ namespace zpi_aspnet_test
 	    public object GetService(Type serviceType) => _provider?.GetService(serviceType) ?? _currentResolver?.GetService(serviceType);
 	    
 
-	    public IEnumerable<object> GetServices(Type serviceType) => _provider?.GetServices(serviceType) ?? _currentResolver?.GetServices(serviceType) ?? new object[0];
+	    public IEnumerable<object> GetServices(Type serviceType) =>
+		    _provider?.GetServices(serviceType) ?? _currentResolver?.GetServices(serviceType) ?? new object[0];
     }
 }
