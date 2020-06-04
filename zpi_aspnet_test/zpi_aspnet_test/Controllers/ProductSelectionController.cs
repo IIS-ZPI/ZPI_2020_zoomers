@@ -15,7 +15,6 @@ namespace zpi_aspnet_test.Controllers
         [HttpPost]
         public ActionResult Index(string product, double preferredPriceInput, int count)
         {
-            DatabaseContextProvider.Instance.ConnectToDb("zoomers_sql_server");
             var productDatabase = new StandardProductDatabaseAccessor();
             var stateDatabase = new StandardStateDatabaseAccessor();
             var categoryDatabase = new StandardCategoryDatabaseAccessor();
@@ -61,8 +60,6 @@ namespace zpi_aspnet_test.Controllers
             mainViewModel.FinalPrice = finalPrice;
             mainViewModel.StateNameList = stateNameList;
             mainViewModel.ChosenProduct = chosenProduct;
-
-            DatabaseContextProvider.Instance.DisconnectFromDb();
 
             return View(mainViewModel);
         }

@@ -11,10 +11,10 @@ namespace zpi_aspnet_test.Controllers
 {
     public class CategorySelectionController : Controller
     {
+
         [HttpPost]
         public ActionResult Index(string category)
         {
-            DatabaseContextProvider.Instance.ConnectToDb("zoomers_sql_server");
             var productDatabase = new StandardProductDatabaseAccessor();
             var categoryDatabase = new StandardCategoryDatabaseAccessor();
             var stateDatabase = new StandardStateDatabaseAccessor();
