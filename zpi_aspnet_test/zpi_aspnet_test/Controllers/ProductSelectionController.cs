@@ -1,32 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using zpi_aspnet_test.Algorithms;
-using zpi_aspnet_test.DataBaseUtilities;
-using zpi_aspnet_test.DataBaseUtilities.DAOs;
+using zpi_aspnet_test.DataBaseUtilities.Interfaces;
 using zpi_aspnet_test.Models;
 
 namespace zpi_aspnet_test.Controllers
 {
     public class ProductSelectionController : Controller
     {
-        [HttpPost]
+	    private readonly IStateDatabaseAccess _stateDatabase;
+	    private readonly ICategoryDatabaseAccess _categoryDatabase;
+	    private readonly IProductDatabaseAccess _productDatabase;
+
+	    public ProductSelectionController(IStateDatabaseAccess stateDatabase, ICategoryDatabaseAccess categoryDatabase, IProductDatabaseAccess productDatabase)
+	    {
+		    _stateDatabase = stateDatabase;
+		    _categoryDatabase = categoryDatabase;
+		    _productDatabase = productDatabase;
+	    }
+
+	    [HttpPost]
         public ActionResult Index(string product, double preferredPriceInput, int count)
         {
-            var productDatabase = new StandardProductDatabaseAccessor();
-            var stateDatabase = new StandardStateDatabaseAccessor();
-            var categoryDatabase = new StandardCategoryDatabaseAccessor();
+	        MainViewModel mainViewModel = new MainViewModel
+	        {
+		        ProductSelectList = new SelectList(_productDatabase.GetProducts(), "Name", "Name"),
+		        CategorySelectList = new SelectList(_categoryDatabase.GetCategories(), "Name", "Name"),
+		        StateSelectList = new SelectList(_stateDatabase.GetStates(), "Name", "Name")
 
-            MainViewModel mainViewModel = new MainViewModel();
-            mainViewModel.ProductSelectList = new SelectList(productDatabase.GetProducts(), "Name", "Name");
-            mainViewModel.CategorySelectList = new SelectList(categoryDatabase.GetCategories(), "Name", "Name");
-            mainViewModel.StateSelectList = new SelectList(stateDatabase.GetStates(), "Name", "Name");
+	        };
 
-            List<StateOfAmericaModel> stateList = new List<StateOfAmericaModel>(stateDatabase.GetStates());
+	        List<StateOfAmericaModel> stateList = new List<StateOfAmericaModel>(_stateDatabase.GetStates());
 
-            ProductModel chosenProduct = productDatabase.GetProductByName(product.Trim());
+            ProductModel chosenProduct = _productDatabase.GetProductByName(product.Trim());
             chosenProduct.PreferredPrice = preferredPriceInput;
 
             mainViewModel.PurchasePrice = Math.Round(chosenProduct.PurchasePrice, 2);
