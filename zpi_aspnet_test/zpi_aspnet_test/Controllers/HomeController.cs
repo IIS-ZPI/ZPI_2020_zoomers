@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using zpi_aspnet_test.DataBaseUtilities.Interfaces;
 using zpi_aspnet_test.Models;
 
