@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace zpi_aspnet_test
 {
@@ -16,6 +17,23 @@ namespace zpi_aspnet_test
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            var services = new ServiceCollection(); 
+            
+            ConfigureServices(services);
+
+            var provider = services.BuildServiceProvider();
+            var currentResolver = DependencyResolver.Current;
+            var serverDependencyResolver = new ServiceDependencyResolver(currentResolver, provider);
+
+            DependencyResolver.SetResolver(serverDependencyResolver);
+        }
+
+        private void ConfigureServices(IServiceCollection services)
+        {
+	        
         }
     }
+
+
 }
