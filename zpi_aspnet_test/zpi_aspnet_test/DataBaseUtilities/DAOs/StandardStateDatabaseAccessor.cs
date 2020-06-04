@@ -118,7 +118,7 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
-			if(!(db.FirstOrDefault<StateOfAmericaModel>("WHERE Id = @0", stateId) is { } model)) throw new ItemNotFoundException();
+			if(!(db.FirstOrDefault<StateOfAmericaModel>("WHERE Id = @0", stateId) is StateOfAmericaModel model)) throw new ItemNotFoundException();
 
 			model.Name = name;
 			model.Groceries = groceries ?? 0;
@@ -152,7 +152,7 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
-			if (!(db.FirstOrDefault<StateOfAmericaModel>("WHERE Id = @0", id) is { } model)) throw new ItemNotFoundException();
+			if (!(db.FirstOrDefault<StateOfAmericaModel>("WHERE Id = @0", id) is StateOfAmericaModel model)) throw new ItemNotFoundException();
 			db.Delete(model);
 
 			_provider.DisconnectFromDb();
@@ -164,7 +164,7 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
-			if (!(db.FirstOrDefault<StateOfAmericaModel>("WHERE Name = @0", name) is { } model)) throw new ItemNotFoundException();
+			if (!(db.FirstOrDefault<StateOfAmericaModel>("WHERE Name = @0", name) is StateOfAmericaModel model)) throw new ItemNotFoundException();
 			db.Delete(model);
 
 			_provider.DisconnectFromDb();
