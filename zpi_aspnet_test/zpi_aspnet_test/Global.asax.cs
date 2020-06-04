@@ -35,5 +35,26 @@ namespace zpi_aspnet_test
         }
     }
 
+    internal class ServiceDependencyResolver : IDependencyResolver
+    {
+	    private readonly IDependencyResolver _currentResolver;
+	    private readonly ServiceProvider _provider;
 
+	    public ServiceDependencyResolver(IDependencyResolver currentResolver, ServiceProvider provider)
+	    {
+		    _currentResolver = currentResolver;
+		    _provider = provider;
+	    }
+
+	    public object GetService(Type serviceType)
+	    {
+		    var result = _provider.GetService(serviceType);
+		    return result;
+	    }
+
+	    public IEnumerable<object> GetServices(Type serviceType)
+	    {
+		    throw new NotImplementedException();
+	    }
+    }
 }
