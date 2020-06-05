@@ -6,8 +6,6 @@ using zpi_aspnet_test.Models;
 
 namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 {
-	//TODO surround all DB access operations into DB transactions
-
 	public class StandardCategoryDatabaseAccessor : ICategoryDatabaseAccess
 	{
 		public StandardCategoryDatabaseAccessor()
@@ -22,7 +20,14 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 			_provider.ConnectToDb();
 
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
-			var categories = _provider.DatabaseContext.Query<CategoryModel>("SELECT * FROM Categories").ToList();
+			ICollection<CategoryModel> categories;
+			var db = _provider.DatabaseContext;
+			
+			using (var transaction = db.GetTransaction())
+			{
+				categories = _provider.DatabaseContext.Query<CategoryModel>("SELECT * FROM Categories").ToList();
+				transaction.Complete();
+			}
 
 			_provider.DisconnectFromDb();
 
@@ -35,7 +40,13 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
-			var rV = db.FirstOrDefault<CategoryModel>("WHERE Id = @0", id);
+			CategoryModel rV;
+
+			using (var transaction = db.GetTransaction())
+			{
+				rV = db.FirstOrDefault<CategoryModel>("WHERE Id = @0", id);
+				transaction.Complete();
+			}
 
 			_provider.DisconnectFromDb();
 
@@ -48,7 +59,13 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
-			var rV = db.FirstOrDefault<CategoryModel>("WHERE Name = @0", name);
+			CategoryModel rV;
+		
+			using (var transaction = db.GetTransaction())
+			{
+				rV = db.FirstOrDefault<CategoryModel>("WHERE Name = @0", name);
+				transaction.Complete();
+			}
 
 			_provider.DisconnectFromDb();
 
@@ -61,9 +78,16 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
-			if (db.FirstOrDefault<CategoryModel>("WHERE Name = @0", name) != null) throw new ItemAlreadyExistsException();
-			var category = new CategoryModel(){Name = name};
-			db.Insert(category);
+			CategoryModel category;
+
+			using (var transaction = db.GetTransaction())
+			{
+				if (db.FirstOrDefault<CategoryModel>("WHERE Name = @0", name) != null)
+					throw new ItemAlreadyExistsException();
+				category = new CategoryModel() {Name = name};
+				db.Insert(category);
+				transaction.Complete();
+			}
 
 			_provider.DisconnectFromDb();
 
@@ -76,8 +100,15 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
-			if(db.FirstOrDefault<CategoryModel>("WHERE Name = @0", category.Name) != null) throw new ItemAlreadyExistsException();
-			db.Insert(category);
+		
+			using (var transaction = db.GetTransaction())
+			{
+				if (db.FirstOrDefault<CategoryModel>("WHERE Name = @0", category.Name) != null)
+					throw new ItemAlreadyExistsException();
+				db.Insert(category);
+
+				transaction.Complete();
+			}
 
 			_provider.DisconnectFromDb();
 
@@ -90,9 +121,16 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
-			if(db.FirstOrDefault<CategoryModel>("WHERE Id = @0", category.Id) == null) throw new ItemNotFoundException();
-			db.Update(category);
-			
+		
+			using (var transaction = db.GetTransaction())
+			{
+				if (db.FirstOrDefault<CategoryModel>("WHERE Id = @0", category.Id) == null)
+					throw new ItemNotFoundException();
+				db.Update(category);
+
+				transaction.Complete();
+			}
+
 			_provider.DisconnectFromDb();
 		}
 
@@ -102,9 +140,15 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
-			if(db.FirstOrDefault<CategoryModel>("WHERE Id = @0", id) == null) throw new ItemNotFoundException();
-			db.Update<CategoryModel>("SET Name = @1 WHERE Id = @0", id, value);
-			
+		
+			using (var transaction = db.GetTransaction())
+			{
+				if (db.FirstOrDefault<CategoryModel>("WHERE Id = @0", id) == null) throw new ItemNotFoundException();
+				db.Update<CategoryModel>("SET Name = @1 WHERE Id = @0", id, value);
+
+				transaction.Complete();
+			}
+
 			_provider.DisconnectFromDb();
 		}
 
@@ -114,8 +158,15 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
-			if(db.FirstOrDefault<CategoryModel>("WHERE Id = @0", model.Id) == null) throw new ItemNotFoundException();
-			db.Delete(model);
+		
+			using (var transaction = db.GetTransaction())
+			{
+				if (db.FirstOrDefault<CategoryModel>("WHERE Id = @0", model.Id) == null)
+					throw new ItemNotFoundException();
+				db.Delete(model);
+
+				transaction.Complete();
+			}
 
 			_provider.DisconnectFromDb();
 		}
@@ -126,8 +177,15 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
-			if(db.FirstOrDefault<CategoryModel>("WHERE Id = @0", categoryId) == null) throw new ItemNotFoundException();
-			db.Delete<CategoryModel>("WHERE Id = @0", categoryId);
+		
+			using (var transaction = db.GetTransaction())
+			{
+				if (db.FirstOrDefault<CategoryModel>("WHERE Id = @0", categoryId) == null)
+					throw new ItemNotFoundException();
+				db.Delete<CategoryModel>("WHERE Id = @0", categoryId);
+
+				transaction.Complete();
+			}
 
 			_provider.DisconnectFromDb();
 		}
@@ -138,8 +196,15 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
-			if (db.FirstOrDefault<CategoryModel>("WHERE Name = @0", name) == null) throw new ItemNotFoundException();
-			db.Delete<CategoryModel>("WHERE Name = @0", name);
+		
+			using (var transaction = db.GetTransaction())
+			{
+				if (db.FirstOrDefault<CategoryModel>("WHERE Name = @0", name) == null)
+					throw new ItemNotFoundException();
+				db.Delete<CategoryModel>("WHERE Name = @0", name);
+
+				transaction.Complete();
+			}
 
 			_provider.DisconnectFromDb();
 		}
