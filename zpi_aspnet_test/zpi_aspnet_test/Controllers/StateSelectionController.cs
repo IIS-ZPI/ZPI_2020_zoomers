@@ -21,18 +21,34 @@ namespace zpi_aspnet_test.Controllers
 	    }
 
 	    // GET: StateSelection
-        public ActionResult Index(string product, string state, double preferredPriceInput, int count)
+        public ActionResult Index(string product, string state, double preferredPriceInput=0.0, int count=1)
         {
+            
             MainViewModel mainViewModel = new MainViewModel();
             mainViewModel.ProductSelectList = new SelectList(_productDatabase.GetProducts(), "Name", "Name");
             mainViewModel.CategorySelectList = new SelectList(_categoryDatabase.GetCategories(), "Name", "Name");
             mainViewModel.StateSelectList = new SelectList(_stateDatabase.GetStates(), "Name", "Name");
+            if (state == null || product == null)
+            {
+                mainViewModel.ChosenProduct = new ProductModel();
+                mainViewModel.PurchasePrice = 0;
+                mainViewModel.PreferredPrice = 0;
+                mainViewModel.NumberOfProducts = 0;
+                mainViewModel.ChosenState = new StateOfAmericaModel();
+
+                mainViewModel.Tax = new List<double> { 6.9 };
+                mainViewModel.Margin = new List<double> { 6.9 };
+                mainViewModel.FinalPrice = new List<double> { 6.9 };
+                mainViewModel.StateNameList = new List<string>();
+
+                return View(mainViewModel);
+            }
 
             StateOfAmericaModel chosenState = _stateDatabase.GetStateByName(state.Trim());
             ProductModel chosenProduct = _productDatabase.GetProductByName(product.Trim());
             chosenProduct.PreferredPrice = preferredPriceInput;
 
-            mainViewModel.ChosenProduct = chosenProduct;
+            mainViewModel.ChosenProduct = chosenProduct;//duplicate line ?
             mainViewModel.PurchasePrice = Math.Round(chosenProduct.PurchasePrice, 2);
             mainViewModel.PreferredPrice = chosenProduct.PreferredPrice;
             mainViewModel.NumberOfProducts = count;
@@ -59,7 +75,7 @@ namespace zpi_aspnet_test.Controllers
             mainViewModel.Margin = margin;
             mainViewModel.FinalPrice = finalPrice;
             mainViewModel.StateNameList = stateNameList;
-            mainViewModel.ChosenProduct = chosenProduct;
+            mainViewModel.ChosenProduct = chosenProduct;//duplicate line ?
             return View(mainViewModel);
         }
     }
