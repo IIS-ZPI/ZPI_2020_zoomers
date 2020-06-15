@@ -59,7 +59,7 @@ namespace zpi_aspnet_test.Controllers
                 tax.Add(Algorithm.GetTax(chosenProduct, state));
 
                 // Margin for chosen product in current state
-                margin.Add(Algorithm.CalculateMargin(chosenProduct));
+                margin.Add(Algorithm.CalculateMargin(chosenProduct, mainViewModel.NumberOfProducts));
             }
 
             mainViewModel.Tax = tax;
