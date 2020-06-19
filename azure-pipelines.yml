@@ -41,7 +41,8 @@ steps:
   inputs:
     codeCoverageTool: 'JaCoCo' 
     # other options: cobertura, jaCoCo
-    summaryFileLocation: coverage.xml
+    summaryFileLocation: '*.coverage'
+    #example path d:\a\_temp\TestResults\f4c836ac-65a6-43a9-bbd2-d7bb7a7db7a9\VssAdministrator_WIN-IS9DU3TS40F 2020-06-19 22_20_51.coverage
 
 - task: PublishBuildArtifacts@1
   inputs:
