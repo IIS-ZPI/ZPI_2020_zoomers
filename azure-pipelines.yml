@@ -30,17 +30,25 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
+
 - task: VSTest@2
   inputs:
     platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-    codeCoverageEnabled: true
+    configuration: '$(buildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=$(Build.SourcesDirectory)\TestResults\Coverage\'
+    #codeCoverageEnabled: true
+
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'VSTest'
+    testResultsFiles: '**/TEST-*.xml'
 
 - task: PublishCodeCoverageResults@1
   inputs:
     codeCoverageTool: 'cobertura' 
     # other options: cobertura, jaCoCo
-    summaryFileLocation: '$(Agent.TempDirectory)/TestResults/**/*.coverage'
+    summaryFileLocation: '$(Build.SourcesDirectory)\TestResults\Coverage\*.coverage'
+    #reportDirectory: '$(Agent.TempDirectory)\\result'
+
     #example path d:\a\_temp\TestResults\f4c836ac-65a6-43a9-bbd2-d7bb7a7db7a9\VssAdministrator_WIN-IS9DU3TS40F 2020-06-19 22_20_51.coverage
 
 - task: PublishBuildArtifacts@1
