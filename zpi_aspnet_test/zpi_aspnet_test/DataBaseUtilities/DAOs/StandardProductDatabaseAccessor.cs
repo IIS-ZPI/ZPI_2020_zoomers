@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Web.Services.Description;
 using zpi_aspnet_test.DataBaseUtilities.Exceptions;
 using zpi_aspnet_test.DataBaseUtilities.Interfaces;
 using zpi_aspnet_test.Models;
@@ -15,7 +14,8 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 		public StandardProductDatabaseAccessor()
 		{
-			_provider = DatabaseContextProvider.Instance ?? throw new InvalidDatabaseOperationException("Database provider is null");
+			_provider = DatabaseContextProvider.Instance ??
+						throw new InvalidDatabaseOperationException("Database provider is null");
 		}
 
 		public ICollection<ProductModel> GetProducts()
@@ -25,11 +25,11 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
 			ICollection<ProductModel> products;
-		
+
 			using (var transaction = db.GetTransaction())
 			{
 				products = _provider.DatabaseContext
-					.Query<ProductModel, CategoryModel>(
+				   .Query<ProductModel, CategoryModel>(
 						"SELECT * FROM Products p LEFT JOIN CATEGORIES c ON p.Category_id = c.Id").ToList();
 				transaction.Complete();
 			}
@@ -46,12 +46,12 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
 			ProductModel rV;
-		
+
 			using (var transaction = db.GetTransaction())
 			{
 				rV = db.Query<ProductModel, CategoryModel>(
 						"SELECT * FROM Products p LEFT JOIN CATEGORIES c ON p.Category_id = c.Id WHERE Id = @0", id)
-					.FirstOrDefault();
+				   .FirstOrDefault();
 				transaction.Complete();
 			}
 
@@ -70,17 +70,17 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 		public ProductModel GetProductByName(string name)
 		{
 			_provider.ConnectToDb();
-			
+
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
 			ProductModel rV;
-			
+
 			using (var transaction = db.GetTransaction())
 			{
 				rV = db.Query<ProductModel, CategoryModel>(
 						"SELECT * FROM Products p LEFT JOIN CATEGORIES c ON p.Category_id = c.Id WHERE p.Name = @0",
 						name)
-					.FirstOrDefault();
+				   .FirstOrDefault();
 
 				transaction.Complete();
 			}
@@ -96,7 +96,7 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
-			
+
 			using (var transaction = db.GetTransaction())
 			{
 				if (db.FirstOrDefault<ProductModel>("WHERE Name = @0", product.Name) != null)
@@ -111,70 +111,35 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 			return product.Id;
 		}
 
-		public int InsertProduct(string name, CategoryModel category, double purchasePrice = 0, double preferredPrice = 0,
+		public int InsertProduct(string name, CategoryModel category, double purchasePrice = 0,
+			double preferredPrice = 0,
 			double finalPrice = 0)
 		{
-			_provider.ConnectToDb();
-
-			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
-			var db = _provider.DatabaseContext;
-			ProductModel product;
-			
-			using (var transaction = db.GetTransaction())
+			var product = new ProductModel
 			{
-				if (db.FirstOrDefault<ProductModel>("WHERE Name = @0", name) != null)
-					throw new ItemAlreadyExistsException();
+				CategoryId = category.Id,
+				FinalPrice = finalPrice,
+				PreferredPrice = preferredPrice,
+				PurchasePrice = purchasePrice,
+				Name = name
+			};
 
-				product = new ProductModel
-				{
-					CategoryId = category.Id, 
-					FinalPrice = finalPrice, 
-					PreferredPrice = preferredPrice,
-					PurchasePrice = purchasePrice,
-					Name = name
-				};
-
-				db.Insert(product);
-
-				transaction.Complete();
-			}
-
-			_provider.DisconnectFromDb();
-
-			return product.Id;
+			return InsertProduct(product);
 		}
 
 		public int InsertProduct(string name, int categoryId, double purchasePrice = 0, double preferredPrice = 0,
 			double finalPrice = 0)
 		{
-			_provider.ConnectToDb();
-
-			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
-			var db = _provider.DatabaseContext;
-			ProductModel product;
-			
-			using (var transaction = db.GetTransaction())
+			var product = new ProductModel
 			{
-				if (db.FirstOrDefault<ProductModel>("WHERE Name = @0", name) != null)
-					throw new ItemAlreadyExistsException();
-			
-				product = new ProductModel
-				{
-					CategoryId = categoryId, 
-					FinalPrice = finalPrice,
-					PreferredPrice = preferredPrice,
-					PurchasePrice = purchasePrice, 
-					Name = name
-				};
-				
-				db.Insert(product);
+				CategoryId = categoryId,
+				FinalPrice = finalPrice,
+				PreferredPrice = preferredPrice,
+				PurchasePrice = purchasePrice,
+				Name = name
+			};
 
-				transaction.Complete();
-			}
-
-			_provider.DisconnectFromDb();
-
-			return product.Id;
+			return InsertProduct(product);
 		}
 
 		public void UpdateProduct(ProductModel product)
@@ -183,7 +148,7 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
-			
+
 			using (var transaction = db.GetTransaction())
 			{
 				if (db.FirstOrDefault<ProductModel>("WHERE Name = @0", product.Name) == null)
@@ -196,64 +161,37 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 			_provider.DisconnectFromDb();
 		}
 
-		public void UpdateProduct(int productId, CategoryModel category, double purchasePrice = 0, double preferredPrice = 0,
+		public void UpdateProduct(int productId, CategoryModel category, double purchasePrice = 0,
+			double preferredPrice = 0,
 			double finalPrice = 0, string productName = "")
 		{
-			_provider.ConnectToDb();
-
-			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
-			var db = _provider.DatabaseContext;
-			
-			using (var transaction = db.GetTransaction())
+			var product = new ProductModel
 			{
-				if (db.FirstOrDefault<ProductModel>("WHERE Id = @0", productId) == null)
-					throw new ItemNotFoundException();
-				
-				var product = new ProductModel
-				{
-					Id = productId,
-					Name = productName,
-					CategoryId = category.Id,
-					FinalPrice = finalPrice,
-					PreferredPrice = preferredPrice,
-					PurchasePrice = purchasePrice
-				};
+				Id = productId,
+				Name = productName,
+				CategoryId = category.Id,
+				FinalPrice = finalPrice,
+				PreferredPrice = preferredPrice,
+				PurchasePrice = purchasePrice
+			};
 
-				db.Update(product);
-
-				transaction.Complete();
-			}
-
-			_provider.DisconnectFromDb();
+			UpdateProduct(product);
 		}
 
 		public void UpdateProduct(int productId, int categoryId, double purchasePrice = 0, double preferredPrice = 0,
 			double finalPrice = 0, string productName = "")
 		{
-			_provider.ConnectToDb();
-
-			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
-			var db = _provider.DatabaseContext;
-			
-			using (var transaction = db.GetTransaction())
+			var product = new ProductModel
 			{
-				if (db.FirstOrDefault<ProductModel>("WHERE Id = @0", productId) == null)
-					throw new ItemNotFoundException();
-				var product = new ProductModel
-				{
-					Id = productId,
-					Name = productName,
-					CategoryId = categoryId,
-					FinalPrice = finalPrice,
-					PreferredPrice = preferredPrice,
-					PurchasePrice = purchasePrice
-				};
-				db.Update(product);
+				Id = productId,
+				Name = productName,
+				CategoryId = categoryId,
+				FinalPrice = finalPrice,
+				PreferredPrice = preferredPrice,
+				PurchasePrice = purchasePrice
+			};
 
-				transaction.Complete();
-			}
-
-			_provider.DisconnectFromDb();
+			UpdateProduct(product);
 		}
 
 		public void DeleteProduct(ProductModel product)
@@ -262,8 +200,13 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
-			if(db.FirstOrDefault<ProductModel>("WHERE Id = @0", product.Id) == null) throw new ItemNotFoundException();
-			db.Delete(product);
+			using (var transaction = db.GetTransaction())
+			{
+				if (db.FirstOrDefault<ProductModel>("WHERE Id = @0", product.Id) == null)
+					throw new ItemNotFoundException();
+				db.Delete(product);
+				transaction.Complete();
+			}
 
 			_provider.DisconnectFromDb();
 		}
@@ -274,7 +217,7 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
-			
+
 			using (var transaction = db.GetTransaction())
 			{
 				if (db.FirstOrDefault<ProductModel>("WHERE Id = @0", productId) == null)
@@ -293,7 +236,7 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
-			
+
 			using (var transaction = db.GetTransaction())
 			{
 				if (db.FirstOrDefault<ProductModel>("WHERE Name = @0", productName) == null)

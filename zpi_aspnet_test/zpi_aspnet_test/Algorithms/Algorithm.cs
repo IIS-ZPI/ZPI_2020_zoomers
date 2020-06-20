@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using zpi_aspnet_test.Enumerators;
+using System.Linq;
 using zpi_aspnet_test.Models;
 
 namespace zpi_aspnet_test.Algorithms
@@ -9,43 +9,18 @@ namespace zpi_aspnet_test.Algorithms
     {
         public static void CalculateFinalPrice(ProductModel product, StateOfAmericaModel state, int numberOfProducts)
         {
-				double tax = GetTax(product, state);
+				double tax = GetTax(product, state, numberOfProducts);
             
             product.FinalPrice = (Math.Round(product.PreferredPrice - (product.PreferredPrice * (tax / 100)), 2)) * numberOfProducts;
         }
 
-        public static double GetTax(ProductModel product, StateOfAmericaModel state)
-        {
-            double tax;
+		public static double GetTax(ProductModel product, StateOfAmericaModel state, int count)
+		{
+			return state.TaxRates.Where(tax => tax.CategoryId == product.CategoryId)?
+			   .FirstOrDefault(model => model.IsMoneyInRange(product.PreferredPrice * count))?.TaxRate ?? throw new ArgumentOutOfRangeException();
+		}
 
-            switch ((ProductCategoryEnum)product.CategoryId)
-            {
-                case ProductCategoryEnum.Groceries:
-                    tax = state.Groceries;
-                    break;
-                case ProductCategoryEnum.PreparedFood:
-                    tax = state.PreparedFood;
-                    break;
-                case ProductCategoryEnum.PrescriptionDrug:
-                    tax = state.PrescriptionDrug;
-                    break;
-                case ProductCategoryEnum.NonPrescriptionDrug:
-                    tax = state.NonPrescriptionDrug;
-                    break;
-                case ProductCategoryEnum.Clothing:
-                    tax = state.Clothing;
-                    break;
-                case ProductCategoryEnum.Intangibles:
-                    tax = state.Intangibles;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-            return Math.Round(tax, 3);
-        }
-
-        public static void SetFinalPrices(ProductModel product, List<StateOfAmericaModel> states, int numberOfProducts)
+		public static void SetFinalPrices(ProductModel product, List<StateOfAmericaModel> states, int numberOfProducts)
         {
             foreach (var state in states)
             {
