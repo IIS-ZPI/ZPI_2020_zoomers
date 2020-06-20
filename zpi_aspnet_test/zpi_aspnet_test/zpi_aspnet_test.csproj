@@ -158,6 +158,7 @@
     <Compile Include="DataBaseUtilities\Interfaces\IProductDatabaseAccess.cs" />
     <Compile Include="DataBaseUtilities\Interfaces\IStateDatabaseAccess.cs" />
     <Compile Include="DataBaseUtilities\Interfaces\ITaxDatabaseAccess.cs" />
+    <Compile Include="DataBaseUtilities\DAOs\StandardTaxDatabaseAccessor.cs" />
     <Compile Include="Enumerators\ProductCategoryEnum.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="Global.asax.cs">

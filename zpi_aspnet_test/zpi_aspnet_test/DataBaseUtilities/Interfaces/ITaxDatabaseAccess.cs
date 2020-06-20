@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 using zpi_aspnet_test.Models;
 
 namespace zpi_aspnet_test.DataBaseUtilities.Interfaces
