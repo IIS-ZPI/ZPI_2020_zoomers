@@ -10,7 +10,8 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 	{
 		public StandardCategoryDatabaseAccessor()
 		{
-			_provider = DatabaseContextProvider.Instance ?? throw new InvalidDatabaseOperationException("Database provider is null");
+			_provider = DatabaseContextProvider.Instance ??
+						throw new InvalidDatabaseOperationException("Database provider is null");
 		}
 
 		private IDatabaseContextProvider _provider;
@@ -22,7 +23,7 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			ICollection<CategoryModel> categories;
 			var db = _provider.DatabaseContext;
-			
+
 			using (var transaction = db.GetTransaction())
 			{
 				categories = _provider.DatabaseContext.Query<CategoryModel>("SELECT * FROM Categories").ToList();
@@ -60,7 +61,7 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
 			CategoryModel rV;
-		
+
 			using (var transaction = db.GetTransaction())
 			{
 				rV = db.FirstOrDefault<CategoryModel>("WHERE Name = @0", name);
@@ -74,24 +75,8 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 		public int InsertCategory(string name)
 		{
-			_provider.ConnectToDb();
-
-			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
-			var db = _provider.DatabaseContext;
-			CategoryModel category;
-
-			using (var transaction = db.GetTransaction())
-			{
-				if (db.FirstOrDefault<CategoryModel>("WHERE Name = @0", name) != null)
-					throw new ItemAlreadyExistsException();
-				category = new CategoryModel() {Name = name};
-				db.Insert(category);
-				transaction.Complete();
-			}
-
-			_provider.DisconnectFromDb();
-
-			return category.Id;
+			var category = new CategoryModel {Name = name};
+			return InsertCategory(category);
 		}
 
 		public int InsertCategory(CategoryModel category)
@@ -100,7 +85,7 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
-		
+
 			using (var transaction = db.GetTransaction())
 			{
 				if (db.FirstOrDefault<CategoryModel>("WHERE Name = @0", category.Name) != null)
@@ -121,7 +106,7 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
-		
+
 			using (var transaction = db.GetTransaction())
 			{
 				if (db.FirstOrDefault<CategoryModel>("WHERE Id = @0", category.Id) == null)
@@ -140,7 +125,7 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
-		
+
 			using (var transaction = db.GetTransaction())
 			{
 				if (db.FirstOrDefault<CategoryModel>("WHERE Id = @0", id) == null) throw new ItemNotFoundException();
@@ -158,7 +143,7 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
-		
+
 			using (var transaction = db.GetTransaction())
 			{
 				if (db.FirstOrDefault<CategoryModel>("WHERE Id = @0", model.Id) == null)
@@ -177,7 +162,7 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
-		
+
 			using (var transaction = db.GetTransaction())
 			{
 				if (db.FirstOrDefault<CategoryModel>("WHERE Id = @0", categoryId) == null)
@@ -196,7 +181,7 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
-		
+
 			using (var transaction = db.GetTransaction())
 			{
 				if (db.FirstOrDefault<CategoryModel>("WHERE Name = @0", name) == null)
