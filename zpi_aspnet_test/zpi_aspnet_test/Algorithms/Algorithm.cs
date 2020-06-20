@@ -16,8 +16,8 @@ namespace zpi_aspnet_test.Algorithms
 
 		public static double GetTax(ProductModel product, StateOfAmericaModel state, int count)
 		{
-			return state.TaxRates.Where(tax => tax.CategoryId == product.CategoryId)
-			   .FirstOrDefault(model => model.IsMoneyInRange(product.PreferredPrice * count))?.TaxRate ?? 0;
+			return state.TaxRates.Where(tax => tax.CategoryId == product.CategoryId)?
+			   .FirstOrDefault(model => model.IsMoneyInRange(product.PreferredPrice * count))?.TaxRate ?? throw new ArgumentOutOfRangeException();
 		}
 
 		public static void SetFinalPrices(ProductModel product, List<StateOfAmericaModel> states, int numberOfProducts)
