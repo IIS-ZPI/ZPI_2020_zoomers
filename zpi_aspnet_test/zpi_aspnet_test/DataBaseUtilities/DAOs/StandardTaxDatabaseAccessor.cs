@@ -90,12 +90,39 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 		public int InsertTax(TaxModel tax)
 		{
-			throw new System.NotImplementedException();
+			_provider.DisconnectFromDb();
+
+			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
+			var db = _provider.DatabaseContext;
+
+			using (var transaction = db.GetTransaction())
+			{
+				if (db.FirstOrDefault<TaxModel>(
+					"WHERE TaxRate = @0 AND MinValue = @1 AND MaxValue = @2 AND CategoryId = @3 AND StateId = @4",
+					tax.TaxRate, tax.MinValue, tax.MaxValue, tax.CategoryId, tax.StateId) != null)
+					throw new ItemAlreadyExistsException();
+				db.Insert(tax);
+
+				transaction.Complete();
+			}
+
+			_provider.DisconnectFromDb();
+
+			return tax.Id;
 		}
 
 		public int InsertTax(int stateId, int categoryId, double taxRate, double minValue, double maxValue)
 		{
-			throw new System.NotImplementedException();
+			var model = new TaxModel
+			{
+				CategoryId = categoryId, 
+				StateId = stateId,
+				MinValue = minValue,
+				MaxValue = maxValue,
+				TaxRate = taxRate
+			};
+
+			return InsertTax(model);
 		}
 
 		public void UpdateTax(TaxModel tax)
