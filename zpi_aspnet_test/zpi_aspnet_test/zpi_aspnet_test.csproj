@@ -157,6 +157,8 @@
     <Compile Include="DataBaseUtilities\Interfaces\IDatabaseContextProvider.cs" />
     <Compile Include="DataBaseUtilities\Interfaces\IProductDatabaseAccess.cs" />
     <Compile Include="DataBaseUtilities\Interfaces\IStateDatabaseAccess.cs" />
+    <Compile Include="DataBaseUtilities\Interfaces\ITaxDatabaseAccess.cs" />
+    <Compile Include="DataBaseUtilities\DAOs\StandardTaxDatabaseAccessor.cs" />
     <Compile Include="Enumerators\ProductCategoryEnum.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="Global.asax.cs">
@@ -166,6 +168,7 @@
     <Compile Include="Models\MainViewModel.cs" />
     <Compile Include="Models\ProductModel.cs" />
     <Compile Include="Models\StateOfAmericaModel.cs" />
+    <Compile Include="Models\TaxModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
