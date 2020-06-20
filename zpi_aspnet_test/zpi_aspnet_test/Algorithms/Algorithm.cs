@@ -53,9 +53,9 @@ namespace zpi_aspnet_test.Algorithms
             }
         }
 
-        public static double CalculateMargin(ProductModel product)
+        public static double CalculateMargin(ProductModel product, int numberOfProducts=1)
         {
-            return Math.Round(product.FinalPrice - product.PurchasePrice, 2);
+            return Math.Round(product.FinalPrice - (product.PurchasePrice * numberOfProducts), 2);
         }
 
         public static void ChangeMargin(ProductModel product, double margin)
