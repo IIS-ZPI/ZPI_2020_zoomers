@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Web.Mvc;
 using zpi_aspnet_test.Algorithms;
 using zpi_aspnet_test.DataBaseUtilities.Interfaces;
@@ -21,7 +22,7 @@ namespace zpi_aspnet_test.Controllers
 	    }
 
 	    [HttpPost]
-        public ActionResult Index(string product, double preferredPriceInput, int count)
+        public ActionResult Index(string product, string preferredPriceInput, int count)
         {
 	        MainViewModel mainViewModel = new MainViewModel
 	        {
@@ -34,7 +35,23 @@ namespace zpi_aspnet_test.Controllers
 	        List<StateOfAmericaModel> stateList = new List<StateOfAmericaModel>(_stateDatabase.GetStates());
 
             ProductModel chosenProduct = _productDatabase.GetProductByName(product.Trim());
-            chosenProduct.PreferredPrice = preferredPriceInput;
+
+            NumberFormatInfo format = new NumberFormatInfo();
+            if (preferredPriceInput.Contains(".") && preferredPriceInput.Contains(","))
+            {
+                format.NumberGroupSeparator = ",";
+                format.NumberDecimalSeparator = ".";
+            }
+            else if (preferredPriceInput.Contains("."))
+            {
+                format.NumberDecimalSeparator = ".";
+            }
+            else if (preferredPriceInput.Contains(","))
+            {
+                format.NumberDecimalSeparator = ",";
+            }
+
+            chosenProduct.PreferredPrice = Convert.ToDouble(preferredPriceInput, format);
 
             mainViewModel.PurchasePrice = Math.Round(chosenProduct.PurchasePrice, 2);
             mainViewModel.PreferredPrice = chosenProduct.PreferredPrice;

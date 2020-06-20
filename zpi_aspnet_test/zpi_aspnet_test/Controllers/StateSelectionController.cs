@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Web.Mvc;
 using zpi_aspnet_test.Algorithms;
 using zpi_aspnet_test.DataBaseUtilities.Interfaces;
@@ -21,7 +22,7 @@ namespace zpi_aspnet_test.Controllers
 	    }
 
 	    // GET: StateSelection
-        public ActionResult Index(string product, string state, double preferredPriceInput=0.0, int count=1)
+        public ActionResult Index(string product, string state, string preferredPriceInput="0", int count=1)
         {
             
             MainViewModel mainViewModel = new MainViewModel();
@@ -46,7 +47,25 @@ namespace zpi_aspnet_test.Controllers
 
             StateOfAmericaModel chosenState = _stateDatabase.GetStateByName(state.Trim());
             ProductModel chosenProduct = _productDatabase.GetProductByName(product.Trim());
-            chosenProduct.PreferredPrice = preferredPriceInput;
+
+
+            NumberFormatInfo format = new NumberFormatInfo();
+            if (preferredPriceInput.Contains(".") && preferredPriceInput.Contains(","))
+            {
+                format.NumberGroupSeparator = ",";
+                format.NumberDecimalSeparator = ".";
+            }else if (preferredPriceInput.Contains("."))
+            {
+                format.NumberDecimalSeparator = ".";
+            }
+            else if (preferredPriceInput.Contains(","))
+            {
+                format.NumberDecimalSeparator = ",";
+            }
+
+
+
+            chosenProduct.PreferredPrice = Convert.ToDouble(preferredPriceInput, format);
 
             mainViewModel.ChosenProduct = chosenProduct;//duplicate line ?
             mainViewModel.PurchasePrice = Math.Round(chosenProduct.PurchasePrice, 2);
