@@ -167,6 +167,7 @@
     <Compile Include="Models\MainViewModel.cs" />
     <Compile Include="Models\ProductModel.cs" />
     <Compile Include="Models\StateOfAmericaModel.cs" />
+    <Compile Include="Models\TaxModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
