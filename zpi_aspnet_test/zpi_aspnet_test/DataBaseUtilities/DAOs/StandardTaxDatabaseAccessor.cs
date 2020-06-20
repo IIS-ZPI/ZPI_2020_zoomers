@@ -115,7 +115,7 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 		{
 			var model = new TaxModel
 			{
-				CategoryId = categoryId, 
+				CategoryId = categoryId,
 				StateId = stateId,
 				MinValue = minValue,
 				MaxValue = maxValue,
@@ -127,17 +127,61 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 		public void UpdateTax(TaxModel tax)
 		{
-			throw new System.NotImplementedException();
+			_provider.ConnectToDb();
+
+			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
+			var db = _provider.DatabaseContext;
+
+			using (var transaction = db.GetTransaction())
+			{
+				if (db.FirstOrDefault<TaxModel>(
+					"WHERE TaxRate = @0 AND MinValue = @1 AND MaxValue = @2 AND CategoryId = @3 AND StateId = @4",
+					tax.TaxRate, tax.MinValue, tax.MaxValue, tax.CategoryId, tax.StateId) == null)
+					throw new ItemNotFoundException();
+				db.Update(tax);
+
+				transaction.Complete();
+			}
+
+			_provider.DisconnectFromDb();
 		}
 
 		public void UpdateTax(int taxId, int stateId, int categoryId, double taxRate, double minValue, double maxValue)
 		{
-			throw new System.NotImplementedException();
+			var model = new TaxModel
+			{
+				Id = taxId,
+				CategoryId = categoryId,
+				StateId = stateId,
+				MinValue = minValue,
+				MaxValue = maxValue,
+				TaxRate = taxRate
+			};
+
+			UpdateTax(model);
 		}
 
 		public void DeleteTax(TaxModel taxToDelete)
 		{
-			throw new System.NotImplementedException();
+			_provider.ConnectToDb();
+
+			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
+			var db = _provider.DatabaseContext;
+
+			using (var transaction = db.GetTransaction())
+			{
+				if (db.FirstOrDefault<TaxModel>(
+					"WHERE TaxRate = @0 AND MinValue = @1 AND MaxValue = @2 AND CategoryId = @3 AND StateId = @4",
+					taxToDelete.TaxRate, taxToDelete.MinValue, taxToDelete.MaxValue, taxToDelete.CategoryId,
+					taxToDelete.StateId) == null)
+					throw new ItemNotFoundException();
+
+				db.Delete(taxToDelete);
+
+				transaction.Complete();
+			}
+
+			_provider.DisconnectFromDb();
 		}
 	}
 }
