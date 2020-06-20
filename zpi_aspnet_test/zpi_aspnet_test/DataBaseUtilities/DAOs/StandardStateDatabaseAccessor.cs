@@ -95,9 +95,7 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 			return state.Id;
 		}
 
-		public int InsertState(string name, double? baseSalesTax = null, double? groceries = null, double? preparedFood = null,
-			double? prescriptionDrug = null, double? nonPrescriptionDrug = null, double? clothing = null,
-			double? intangibles = null)
+		public int InsertState(string name, double? baseSalesTax = null)
 		{
 			_provider.ConnectToDb();
 
@@ -113,12 +111,6 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 				state = new StateOfAmericaModel
 				{
 					BaseSalesTax = baseSalesTax ?? 0,
-					Groceries = groceries ?? 0,
-					PreparedFood = preparedFood ?? 0,
-					PrescriptionDrug = prescriptionDrug ?? 0,
-					NonPrescriptionDrug = nonPrescriptionDrug ?? 0,
-					Clothing = clothing ?? 0,
-					Intangibles = intangibles ?? 0,
 					Name = name
 				};
 
@@ -151,9 +143,7 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 			_provider.DisconnectFromDb();
 		}
 
-		public void UpdateState(int stateId, string name = "", double? baseSalesTax = null, double? groceries = null,
-			double? preparedFood = null, double? prescriptionDrug = null, double? nonPrescriptionDrug = null,
-			double? clothing = null, double? intangibles = null)
+		public void UpdateState(int stateId, string name = "", double? baseSalesTax = null)
 		{
 			_provider.ConnectToDb();
 
@@ -166,13 +156,7 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 					throw new ItemNotFoundException();
 
 				model.Name = name;
-				model.Groceries = groceries ?? 0;
 				model.BaseSalesTax = baseSalesTax ?? 0;
-				model.NonPrescriptionDrug = nonPrescriptionDrug ?? 0;
-				model.PreparedFood = preparedFood ?? 0;
-				model.PrescriptionDrug = prescriptionDrug ?? 0;
-				model.Clothing = clothing ?? 0;
-				model.Intangibles = intangibles ?? 0;
 
 				db.Update(model);
 
