@@ -11,7 +11,6 @@ namespace zpi_aspnet_test.DataBaseUtilities.Interfaces
 		ICollection<TaxModel> GetTaxesByCategory(CategoryModel category);
 		ICollection<TaxModel> GetTaxesByCategory(int categoryId);
 		ICollection<TaxModel> GetTaxesByCategory(string categoryName);
-		ICollection<TaxModel> GetTaxesByState(string stateName);
 		ICollection<TaxModel> GetTaxesByState(int stateId);
 		ICollection<TaxModel> GetTaxesByState(StateOfAmericaModel state);
 
