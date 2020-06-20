@@ -86,7 +86,7 @@ namespace zpi_aspnet_test.Controllers
             finalPrice.Add(chosenProduct.FinalPrice);
 
             // Tax for current state
-            tax.Add(Algorithm.GetTax(chosenProduct, chosenState));
+            tax.Add(Algorithm.GetTax(chosenProduct, chosenState, mainViewModel.NumberOfProducts));
 
             // Margin for chosen product in current state
             margin.Add(Algorithm.CalculateMargin(chosenProduct, mainViewModel.NumberOfProducts));

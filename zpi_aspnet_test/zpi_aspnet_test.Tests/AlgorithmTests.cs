@@ -33,7 +33,7 @@ namespace zpi_aspnet_test.Tests
 		[TestInitialize]
 		public void Setup()
 		{
-			_state = State().WithClothingTaxRate(0.0).Build();
+			_state = State().AddTax().OfCategoryId((int)ProductCategoryEnum.Clothing).ConfirmTax().Build();
 
 			_product = Product().WithCategoryId((int) ProductCategoryEnum.Clothing).Build();
 
@@ -60,7 +60,7 @@ namespace zpi_aspnet_test.Tests
 		[TestMethod]
 		public void GetTaxShouldThrowArgumentOutOfRangeExceptionIfProvidedCategoryIdIsIncorrect()
 		{
-			void CallingGetTaxMethodWithPassedProductInstanceHavingIncorrectCategoryId() => Algorithm.CalculateFinalPrice(_invalidProduct, null, 1);
+			void CallingGetTaxMethodWithPassedProductInstanceHavingIncorrectCategoryId() => Algorithm.CalculateFinalPrice(_invalidProduct, _state, 1);
 
 			Assert.That(CallingGetTaxMethodWithPassedProductInstanceHavingIncorrectCategoryId, Throws.An<ArgumentOutOfRangeException>());
 		}
@@ -94,7 +94,7 @@ namespace zpi_aspnet_test.Tests
 		[TestMethod]
 		public void CalculateFinalPriceShouldUpdateProperlyFinalPriceOfProduct()
 		{
-			var state = State().WithClothingTaxRate(10).Build();
+			var state = State().AddTax().OfCategoryId((int)ProductCategoryEnum.Clothing).OfTaxRate(10).ConfirmTax().Build();
 			var product = Product().WithCategoryId((int) ProductCategoryEnum.Clothing).WithPurchasePrice(20)
 				.WithPreferredPrice(PreferredPriceOf40).Build();
 			
