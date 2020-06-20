@@ -10,8 +10,36 @@
 @section scripts
 {
     <script>
+        var currentTab;
+
+        $(document).ready(function() {
+            $(".target").on('keyup mouseup',
+                function() {
+                    if (this.value < 0) {
+                        $(this).css({ 'background-color': 'lightcoral' });
+                        $(':input[type="submit"]').prop('disabled', true);
+                    } else {
+                        $(this).css({ 'background-color': 'white' });
+
+                        var currentTabId = window.location.hash.replace('#', '');
+
+                        var targetInputs = document.getElementById(currentTabId).getElementsByClassName('target');
+                        var isDisabled = false;
+
+                        $.each(targetInputs,
+                            function (index, input) {
+                                if (input.value < 0) {
+                                    isDisabled = true;
+                                }
+                            });
+
+                        $(':input[type="submit"]').prop('disabled', isDisabled);
+                    }
+                });
+        });
+
         $('.nav-tabs a').click(function () {
             $(this).tab('show');
-        })
+        });
     </script>
 }
