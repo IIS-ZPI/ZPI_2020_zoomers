@@ -22,7 +22,7 @@
                 <td>@(i+1)</td>
                 <td>@Model.Category</td>
                 <td>@Model.ProductList[i].Name</td>
-                <td>@Math.Round(Model.ProductList[i].PurchasePrice, 2)$</td>
+                <td>$@Math.Round(Model.ProductList[i].PurchasePrice, 2)</td>
             </tr>
         }
         </thead>
