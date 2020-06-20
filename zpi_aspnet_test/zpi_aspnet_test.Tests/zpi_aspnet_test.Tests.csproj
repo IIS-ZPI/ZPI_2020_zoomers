@@ -103,6 +103,7 @@
     <Compile Include="Builders\IBuilder.cs" />
     <Compile Include="Builders\ProductBuilder.cs" />
     <Compile Include="Builders\StateBuilder.cs" />
+    <Compile Include="Builders\TaxBuilder.cs" />
     <Compile Include="DoesNotThrow.cs" />
     <Compile Include="Feature_Parser.Tests\ParserTestsScenario.cs" />
     <Compile Include="DoesNotThrowMatcher.cs" />
