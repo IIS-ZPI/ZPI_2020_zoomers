@@ -40,6 +40,7 @@ steps:
   inputs:
     codeCoverageTool: 'cobertura' 
     summaryFileLocation: '$(Agent.TempDirectory)/TestResults/**/*.coverage'
+    reportDirectory: '$(Agent.TempDirectory)/cchtml/'
 
 - task: PublishBuildArtifacts@1
   inputs:
