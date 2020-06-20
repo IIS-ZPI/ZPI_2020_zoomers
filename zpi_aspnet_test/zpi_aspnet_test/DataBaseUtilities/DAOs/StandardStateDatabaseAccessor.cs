@@ -27,7 +27,8 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 			using (var transaction = db.GetTransaction())
 			{
-				states = db.Query<StateOfAmericaModel, TaxModel>(
+				states = db.Query<StateOfAmericaModel, TaxModel, StateOfAmericaModel>(
+					new StateTaxRelator().MapStateAndTax,
 					"SELECT * FROM States s LEFT JOIN Taxes t ON s.Id = t.StateId").ToList();
 				transaction.Complete();
 			}
