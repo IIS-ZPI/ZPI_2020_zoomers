@@ -12,7 +12,8 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 		public StandardStateDatabaseAccessor()
 		{
-			_provider = DatabaseContextProvider.Instance ?? throw new InvalidDatabaseOperationException("Database provider is null");
+			_provider = DatabaseContextProvider.Instance ??
+						throw new InvalidDatabaseOperationException("Database provider is null");
 		}
 
 		public ICollection<StateOfAmericaModel> GetStates()
@@ -20,13 +21,14 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 			_provider.ConnectToDb();
 
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
-			
+
 			var db = _provider.DatabaseContext;
 			List<StateOfAmericaModel> states;
-			
+
 			using (var transaction = db.GetTransaction())
 			{
-				states = db.Query<StateOfAmericaModel>("SELECT * FROM States").ToList();
+				states = db.Query<StateOfAmericaModel, TaxModel>(
+					"SELECT * FROM States s LEFT JOIN Taxes t ON s.Id = t.StateId").ToList();
 				transaction.Complete();
 			}
 
@@ -35,44 +37,11 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 			return states;
 		}
 
-		public StateOfAmericaModel GetStateById(int id)
-		{
-			_provider.ConnectToDb();
+		public StateOfAmericaModel GetStateById(int id) => GetStates().FirstOrDefault(state => state.Id == id);
 
-			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
+		public StateOfAmericaModel GetStateByName(string name) =>
+			GetStates().FirstOrDefault(state => state.Name.Equals(name));
 
-			var db = _provider.DatabaseContext;
-			StateOfAmericaModel rV;
-		
-			using (var transaction = db.GetTransaction())
-			{
-				rV = db.FirstOrDefault<StateOfAmericaModel>("WHERE Id = @0", id);
-				transaction.Complete();
-			}
-
-			_provider.DisconnectFromDb();
-
-			return rV;
-		}
-
-		public StateOfAmericaModel GetStateByName(string name)
-		{
-			_provider.ConnectToDb();
-
-			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
-			var db = _provider.DatabaseContext;
-			StateOfAmericaModel rV;
-
-			using (var transaction = db.GetTransaction())
-			{
-				rV = db.FirstOrDefault<StateOfAmericaModel>("WHERE Name = @0", name);
-				transaction.Complete();
-			}
-
-			_provider.DisconnectFromDb();
-
-			return rV;
-		}
 
 		public int InsertState(StateOfAmericaModel state)
 		{
@@ -97,31 +66,13 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 		public int InsertState(string name, double? baseSalesTax = null)
 		{
-			_provider.ConnectToDb();
-
-			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
-			
-			var db = _provider.DatabaseContext;
-			StateOfAmericaModel state;
-
-			using (var transaction = db.GetTransaction())
+			var state = new StateOfAmericaModel
 			{
-				if (db.FirstOrDefault<StateOfAmericaModel>("WHERE Name = @0", name) != null) throw new ItemAlreadyExistsException();
+				BaseSalesTax = baseSalesTax ?? 0,
+				Name = name
+			};
 
-				state = new StateOfAmericaModel
-				{
-					BaseSalesTax = baseSalesTax ?? 0,
-					Name = name
-				};
-
-				db.Insert(state);
-
-				transaction.Complete();
-			}
-			
-			_provider.DisconnectFromDb();
-
-			return state.Id;
+			return InsertState(state);
 		}
 
 		public void UpdateState(StateOfAmericaModel state)
@@ -130,7 +81,7 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
-		
+
 			using (var transaction = db.GetTransaction())
 			{
 				if (db.FirstOrDefault<StateOfAmericaModel>("WHERE Id = @0", state.Id) == null)
@@ -145,25 +96,13 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 		public void UpdateState(int stateId, string name = "", double? baseSalesTax = null)
 		{
-			_provider.ConnectToDb();
-
-			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
-			var db = _provider.DatabaseContext;
-			
-			using (var transaction = db.GetTransaction())
+			var state = new StateOfAmericaModel
 			{
-				if (!(db.FirstOrDefault<StateOfAmericaModel>("WHERE Id = @0", stateId) is StateOfAmericaModel model))
-					throw new ItemNotFoundException();
+				BaseSalesTax = baseSalesTax ?? 0,
+				Name = name
+			};
 
-				model.Name = name;
-				model.BaseSalesTax = baseSalesTax ?? 0;
-
-				db.Update(model);
-
-				transaction.Complete();
-			}
-
-			_provider.DisconnectFromDb();
+			UpdateState(state);
 		}
 
 		public void DeleteState(StateOfAmericaModel state)
@@ -172,13 +111,13 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
-			
+
 			using (var transaction = db.GetTransaction())
 			{
 				if ((db.FirstOrDefault<StateOfAmericaModel>("WHERE Id = @0", state.Id) == null))
 					throw new ItemNotFoundException();
 				db.Delete(state);
-				
+
 				transaction.Complete();
 			}
 
@@ -191,7 +130,7 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
-			
+
 			using (var transaction = db.GetTransaction())
 			{
 				if (!(db.FirstOrDefault<StateOfAmericaModel>("WHERE Id = @0", id) is StateOfAmericaModel model))
@@ -210,7 +149,7 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 			if (!_provider.Connected) throw new AccessToNotConnectedDatabaseException();
 			var db = _provider.DatabaseContext;
-			
+
 			using (var transaction = db.GetTransaction())
 			{
 				if (!(db.FirstOrDefault<StateOfAmericaModel>("WHERE Name = @0", name) is StateOfAmericaModel model))
