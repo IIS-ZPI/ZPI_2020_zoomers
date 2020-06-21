@@ -4,10 +4,12 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using Microsoft.Ajax.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using zpi_aspnet_test.Controllers;
 using zpi_aspnet_test.DataBaseUtilities.DAOs;
 using zpi_aspnet_test.DataBaseUtilities.Interfaces;
+using zpi_aspnet_test.ViewModels;
 
 namespace zpi_aspnet_test
 {
@@ -27,21 +29,45 @@ namespace zpi_aspnet_test
 			var provider = services.BuildServiceProvider();
 			var currentResolver = DependencyResolver.Current;
 			var serverDependencyResolver = new ServiceDependencyResolver(currentResolver, provider);
-			
+
 			DependencyResolver.SetResolver(serverDependencyResolver);
 			ControllerBuilder.Current.SetControllerFactory(new ZoomersControllerFactory());
 		}
 
-        void Application_Error(object sender, EventArgs e)
-        {
-            Exception exc = Server.GetLastError();
+		protected void Application_Error(object sender, EventArgs e)
+		{
+			var context = ((MvcApplication) sender).Context;
 
-            if (exc is HttpUnhandledException)
-            {
-                // Pass the error on to the error page.
-                Server.Transfer("ErrorPage.aspx?handler=Application_Error%20-%20Global.asax", true);
-            }
-        }
+			var exc = Server.GetLastError();
+			var controller = DependencyResolver.Current.GetService<ErrorController>();
+			var model = new ErrorViewModel();
+
+			switch (exc)
+			{
+				case HttpException httpException:
+					model.ErrorCode = httpException.GetHttpCode().ToString();
+					model.ErrorMessage = httpException.GetHtmlErrorMessage();
+					break;
+				case ArgumentNullException argNullException:
+					model.ErrorCode = "404";
+					model.ErrorMessage = "Requested site has not been found";
+					break;
+				default:
+					model.ErrorCode = "500";
+					model.ErrorMessage = "Internal server error :(";
+					break;
+			}
+
+			var routeData = new RouteData();
+			routeData.Values["controller"] = "Error";
+			routeData.Values["action"] = "HandleError";
+			context.ClearError();
+			context.Response.Clear();
+			context.Response.StatusCode = int.Parse(model.ErrorCode);
+			context.Response.TrySkipIisCustomErrors = true;
+			controller.ViewModel = model;
+			((IController) controller).Execute(new RequestContext(new HttpContextWrapper(context), routeData));
+		}
 
 		private void ConfigureServices(IServiceCollection services)
 		{
@@ -52,6 +78,7 @@ namespace zpi_aspnet_test
 			services.AddTransient<CategorySelectionController>();
 			services.AddTransient<ProductSelectionController>();
 			services.AddTransient<StateSelectionController>();
+			services.AddTransient<ErrorController>();
 		}
 	}
 
@@ -66,7 +93,8 @@ namespace zpi_aspnet_test
 			_provider = provider;
 		}
 
-		public object GetService(Type serviceType) => _provider?.GetService(serviceType) ?? _currentResolver?.GetService(serviceType);
+		public object GetService(Type serviceType) =>
+			_provider?.GetService(serviceType) ?? _currentResolver?.GetService(serviceType);
 
 
 		public IEnumerable<object> GetServices(Type serviceType) =>

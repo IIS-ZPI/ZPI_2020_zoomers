@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 using System.Web.Mvc;
+using zpi_aspnet_test.Models;
 
-namespace zpi_aspnet_test.Models
+namespace zpi_aspnet_test.ViewModels
 {
     public class MainViewModel
     {
