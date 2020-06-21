@@ -141,6 +141,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\CategorySelectionController.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ProductSelectionController.cs" />
     <Compile Include="Controllers\StateSelectionController.cs" />
@@ -227,6 +228,7 @@
     <Content Include="Views\ProductSelection\Index.cshtml" />
     <Content Include="Views\Shared\_FormsView.cshtml" />
     <Content Include="Views\StateSelection\Index.cshtml" />
+    <Content Include="Views\Error\HandleError.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
