@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using zpi_aspnet_test.Algorithms;
 using zpi_aspnet_test.DataBaseUtilities.Interfaces;
 using zpi_aspnet_test.ViewModels;
+using static zpi_aspnet_test.Utilities.DoubleUtilities;
 
 namespace zpi_aspnet_test.Controllers
 {
@@ -34,22 +34,7 @@ namespace zpi_aspnet_test.Controllers
 			var chosenProduct = products.FirstOrDefault(p => p.Name.Equals(product.Trim())) ??
 								throw new HttpException(404, "Requested resource does not exist");
 
-			var format = new NumberFormatInfo();
-			if (preferredPriceInput.Contains(".") && preferredPriceInput.Contains(","))
-			{
-				format.NumberGroupSeparator = ",";
-				format.NumberDecimalSeparator = ".";
-			}
-			else if (preferredPriceInput.Contains("."))
-			{
-				format.NumberDecimalSeparator = ".";
-			}
-			else if (preferredPriceInput.Contains(","))
-			{
-				format.NumberDecimalSeparator = ",";
-			}
-
-			chosenProduct.PreferredPrice = Convert.ToDouble(preferredPriceInput, format);
+			chosenProduct.PreferredPrice = ParsePrice(preferredPriceInput);
 
 			var stateNameList = new List<string>();
 			var finalPrice = new List<double>();
