@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 using zpi_aspnet_test.DataBaseUtilities.Interfaces;
 using zpi_aspnet_test.Models;
@@ -6,32 +7,37 @@ using zpi_aspnet_test.ViewModels;
 
 namespace zpi_aspnet_test.Controllers
 {
-    public class CategorySelectionController : Controller
-    {
-	    private readonly ICategoryDatabaseAccess _categoryRepository;
-	    private readonly IStateDatabaseAccess _stateRepository;
-	    private readonly IProductDatabaseAccess _productRepository;
+	public class CategorySelectionController : Controller
+	{
+		private readonly ICategoryDatabaseAccess _categoryRepository;
+		private readonly IStateDatabaseAccess _stateRepository;
+		private readonly IProductDatabaseAccess _productRepository;
 
-	    public CategorySelectionController(ICategoryDatabaseAccess categoryRepository, IStateDatabaseAccess stateRepository, IProductDatabaseAccess productRepository)
-	    {
-		    _categoryRepository = categoryRepository;
-		    _stateRepository = stateRepository;
-		    _productRepository = productRepository;
-	    }
+		public CategorySelectionController(ICategoryDatabaseAccess categoryRepository,
+			IStateDatabaseAccess stateRepository, IProductDatabaseAccess productRepository)
+		{
+			_categoryRepository = categoryRepository;
+			_stateRepository = stateRepository;
+			_productRepository = productRepository;
+		}
 
-	    [HttpPost]
-        public ActionResult Index(string category)
-        {
-            MainViewModel mainViewModel = new MainViewModel();
-            mainViewModel.ProductSelectList = new SelectList(_productRepository.GetProducts(), "Name", "Name");
-            mainViewModel.CategorySelectList = new SelectList(_categoryRepository.GetCategories(), "Name", "Name");
-            mainViewModel.StateSelectList = new SelectList(_stateRepository.GetStates(), "Name", "Name");
+		[HttpPost]
+		public ActionResult Index(string category)
+		{
+			var productModels = _productRepository.GetProducts();
+			var categoryModels = _categoryRepository.GetCategories();
+			var stateOfAmericaModels = _stateRepository.GetStates();
 
-            mainViewModel.ProductList = new List<ProductModel>(
-                _productRepository.GetProductsFromCategory(_categoryRepository.GetCategoryByName(category)));
-            mainViewModel.Category = category;
+			var mainViewModel = new MainViewModel
+			{
+				ProductSelectList = new SelectList(productModels, "Name", "Name"),
+				CategorySelectList = new SelectList(categoryModels, "Name", "Name"),
+				StateSelectList = new SelectList(stateOfAmericaModels, "Name", "Name"),
+				ProductList = productModels.Where(product => product.Category.Name.Equals(category.Trim())).ToList(),
+				Category = category
+			};
 
-            return View(mainViewModel);
-        }
-    }
+			return View(mainViewModel);
+		}
+	}
 }
