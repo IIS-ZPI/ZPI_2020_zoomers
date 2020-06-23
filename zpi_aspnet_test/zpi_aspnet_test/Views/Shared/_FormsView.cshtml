@@ -1,13 +1,40 @@
 ﻿@model zpi_aspnet_test.ViewModels.MainViewModel
 
 <ul class="nav nav-tabs" >
-    <li class="nav-item"><a data-togle="tab" class="nav-link" href="#byProduct">By product</a></li>
-    <li class="nav-item"><a data-togle="tab" class="nav-link" href="#byCategory">By category</a></li>
-    <li class="nav-item"><a data-togle="tab" class="nav-link" href="#byState">By state</a></li>
+    <li class="nav-item">
+        <a data-togle="tab" class="nav-link" href="#byProduct">
+            <span class="material-icons icon-sm">
+                store_mall_directory
+            </span>
+            By product
+        </a>
+    </li>
+    <li class="nav-item">
+        <a data-togle="tab" class="nav-link" href="#byCategory">
+
+            <span class="material-icons icon-sm">
+                category
+            </span>
+            By category
+        </a>
+    </li>
+    <li class="nav-item">
+        <a data-togle="tab" class="nav-link" href="#byState">
+
+            <span class="material-icons icon-sm">
+                flag
+            </span>
+            By state
+        </a>
+    </li>
 </ul>
 
 <div class="tab-content">
     <div id="default" class="row tab-pane fade in active " style="margin-top: 10px; padding-left:30px; opacity: 0.5">
+
+        <span class="material-icons">
+            arrow_upward
+        </span>
         Choose how you want to calculate prices
     </div>
     <div id="byProduct" class="row tab-pane fade in" style="margin-top: 10px">
