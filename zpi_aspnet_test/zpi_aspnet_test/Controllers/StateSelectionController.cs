@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Web;
 using System.Web.Mvc;
 using zpi_aspnet_test.Algorithms;
+using zpi_aspnet_test.DataBaseUtilities.Exceptions;
 using zpi_aspnet_test.DataBaseUtilities.Interfaces;
 using zpi_aspnet_test.ViewModels;
 using static zpi_aspnet_test.Utilities.DoubleUtilities;
@@ -72,9 +73,17 @@ namespace zpi_aspnet_test.Controllers
 
 				return View(mainViewModel);
 			}
+			catch (AccessToNotConnectedDatabaseException)
+			{
+				throw new HttpException(500, "Server encountered the problem with access to data");
+			}
+			catch (ItemNotFoundException)
+			{
+				throw new HttpException(404, "Requested resource does not exist");
+			}
 			catch (Exception)
 			{
-				throw;
+				throw new HttpException(500, "Server encountered some problems, please contact support");
 			}
 		}
 	}

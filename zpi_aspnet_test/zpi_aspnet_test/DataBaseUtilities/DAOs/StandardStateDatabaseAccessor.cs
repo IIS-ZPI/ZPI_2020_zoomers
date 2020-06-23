@@ -38,10 +38,11 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 			return states;
 		}
 
-		public StateOfAmericaModel GetStateById(int id) => GetStates().FirstOrDefault(state => state.Id == id);
+		public StateOfAmericaModel GetStateById(int id) =>
+			GetStates().FirstOrDefault(state => state.Id == id) ?? throw new ItemNotFoundException();
 
 		public StateOfAmericaModel GetStateByName(string name) =>
-			GetStates().FirstOrDefault(state => state.Name.Equals(name));
+			GetStates().FirstOrDefault(state => state.Name.Equals(name)) ?? throw new ItemNotFoundException();
 
 
 		public int InsertState(StateOfAmericaModel state)

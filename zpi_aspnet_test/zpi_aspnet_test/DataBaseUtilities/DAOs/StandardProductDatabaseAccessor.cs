@@ -57,7 +57,7 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 			_provider.DisconnectFromDb();
 
-			return rV;
+			return rV ?? throw new ItemNotFoundException();
 		}
 
 		public ICollection<ProductModel> GetProductsFromCategory(CategoryModel model)
@@ -87,7 +87,7 @@ namespace zpi_aspnet_test.DataBaseUtilities.DAOs
 
 			_provider.DisconnectFromDb();
 
-			return rV;
+			return rV ?? throw new ItemNotFoundException();
 		}
 
 		public int InsertProduct(ProductModel product)
