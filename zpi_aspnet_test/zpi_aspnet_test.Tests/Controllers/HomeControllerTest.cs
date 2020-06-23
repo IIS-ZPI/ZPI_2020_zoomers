@@ -67,5 +67,29 @@ namespace zpi_aspnet_test.Tests.Controllers
 			// Assert
 			Assert.That(result, Is(NotNull()));
 		}
-	}
+
+		[TestMethod]
+		public void IndexPageShouldCallGetStatesOfStatesRepositoryOnlyOneTime()
+		{
+			var controller = new HomeController(_categoryRepository, _stateRepository, _productRepository);
+			controller.Index();
+			_stateRepository.Received(1).GetStates();
+		}
+
+		[TestMethod]
+		public void IndexPageShouldCallGetCategoriesOfCategoriesRepositoryOnlyOneTime()
+		{
+			var controller = new HomeController(_categoryRepository, _stateRepository, _productRepository);
+			controller.Index();
+			_categoryRepository.Received(1).GetCategories();
+		}
+
+		[TestMethod]
+		public void IndexPageShouldCallGetProductsOfProductsRepositoryOnlyOneTime()
+		{
+			var controller = new HomeController(_categoryRepository, _stateRepository, _productRepository);
+			controller.Index();
+			_productRepository.Received(1).GetProducts();
+		}
+   }
 }
