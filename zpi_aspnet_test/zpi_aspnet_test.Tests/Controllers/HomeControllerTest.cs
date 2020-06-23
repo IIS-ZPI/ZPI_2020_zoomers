@@ -1,12 +1,16 @@
-﻿using System.Web.Mvc;
+﻿using System.Web;
+using System.Web.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using zpi_aspnet_test.Controllers;
+using zpi_aspnet_test.DataBaseUtilities.Exceptions;
 using zpi_aspnet_test.DataBaseUtilities.Interfaces;
 using Assert = NHamcrest.XUnit.Assert;
 using static NHamcrest.Is;
 using static zpi_aspnet_test.Tests.Matchers.DecoratorMatchers;
 using static NHamcrest.Has;
+using static Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
 namespace zpi_aspnet_test.Tests.Controllers
 {
@@ -16,7 +20,9 @@ namespace zpi_aspnet_test.Tests.Controllers
 		private ICategoryDatabaseAccess _categoryRepository;
 		private IStateDatabaseAccess _stateRepository;
 		private IProductDatabaseAccess _productRepository;
+		private const string ExpectedMessageOf500CodeForAccessTrouble = "Server encountered the problem with access to data";
 		private const string ExpectedMessage = "About this app";
+		private const int Http500 = 500;
 
 		[TestInitialize]
 		public void Setup()
@@ -91,5 +97,22 @@ namespace zpi_aspnet_test.Tests.Controllers
 			controller.Index();
 			_productRepository.Received(1).GetProducts();
 		}
-   }
+
+		[TestMethod]
+		public void IndexPageShouldThrowHttpExceptionWithStatusCodeEqualTo500AndSpecifiedMessageIfAnyRepositoryThrowErrorWithDbConnection()
+		{
+			_stateRepository.GetStates().Throws(new AccessToNotConnectedDatabaseException());
+
+			var controller = new HomeController(_categoryRepository, _stateRepository, _productRepository);
+
+			ActionResult Call() => controller.Index();
+			var exception = Assert.Throws<HttpException>(Call);
+
+			var code = exception.GetHttpCode();
+			var message = exception.Message;
+
+			Assert.That(code, Is(EqualTo(Http500)));
+			Assert.That(message, Is(EqualTo(ExpectedMessageOf500CodeForAccessTrouble)));
+		}
+	}
 }
