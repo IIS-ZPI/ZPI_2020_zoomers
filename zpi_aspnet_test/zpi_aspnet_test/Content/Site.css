@@ -102,3 +102,47 @@ textarea {
     border-color: #03A9F4;
     background-color: #03A9F4;
 }
+
+
+.icon-sm{
+    font-size:1em !important;
+}
+
+
+@media screen and (max-width: 768px) {
+    .form-group {
+        width: 100%;
+        min-width: 100%;
+        margin-top: 0;
+    }
+    .form-control{
+        max-width:100%;
+    }
+    .btn-default{
+        width:100%;
+        max-width:100%;
+    }
+
+
+    .tab-title {
+        padding-left: 1px;
+        padding-right: 1px;
+    }
+    .tab-title .nav-link {
+        padding-right: 1px;
+    }
+}
+@media screen and (max-width: 403px) {
+    .tab-title{
+        width:100%;
+        font-size:0.8rem;
+    }
+}
+@media screen and (max-width: 380px) {
+    .tab-title {
+        width: 100%;
+        font-size: 0.7rem;
+    }
+}
+
+    
