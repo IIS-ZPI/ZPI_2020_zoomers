@@ -175,7 +175,55 @@ namespace zpi_aspnet_test.Tests.Controllers
 		[TestMethod]
 		public void AboutPageShouldNotCallCategoriesRepository()
 		{
-			
+			var controller = new HomeController(_categoryRepository, _stateRepository, _productRepository);
+			controller.About();
+			_categoryRepository.Received(0).GetCategories();
+			_categoryRepository.Received(0).GetCategoryById(Arg.Any<int>());
+			_categoryRepository.Received(0).GetCategoryByName(Arg.Any<string>());
+			_categoryRepository.Received(0).UpdateCategory(Arg.Any<CategoryModel>());
+			_categoryRepository.Received(0).DeleteCategory(Arg.Any<CategoryModel>());
+			_categoryRepository.Received(0).DeleteCategory(Arg.Any<int>());
+			_categoryRepository.Received(0).DeleteCategory(Arg.Any<string>());
+			_categoryRepository.Received(0).UpdateCategory(Arg.Any<int>(), Arg.Any<string>());
+			_categoryRepository.Received(0).InsertCategory(Arg.Any<CategoryModel>());
+			_categoryRepository.Received(0).InsertCategory(Arg.Any<string>());
+		}
+
+		[TestMethod]
+		public void AboutPageShouldNotCallStatesRepository()
+		{
+			var controller = new HomeController(_categoryRepository, _stateRepository, _productRepository);
+			controller.About();
+			_stateRepository.Received(0).GetStates();
+			_stateRepository.Received(0).GetStateById(Arg.Any<int>());
+			_stateRepository.Received(0).GetStateByName(Arg.Any<string>());
+			_stateRepository.Received(0).UpdateState(Arg.Any<StateOfAmericaModel>());
+			_stateRepository.Received(0).UpdateState(Arg.Any<int>());
+			_stateRepository.Received(0).InsertState(Arg.Any<StateOfAmericaModel>());
+			_stateRepository.Received(0).InsertState(Arg.Any<string>());
+			_stateRepository.Received(0).DeleteState(Arg.Any<StateOfAmericaModel>());
+			_stateRepository.Received(0).DeleteState(Arg.Any<int>());
+			_stateRepository.Received(0).DeleteState(Arg.Any<string>());
+		}
+
+		[TestMethod]
+		public void AboutPageShouldNotCallProductsRepository()
+		{
+			var controller = new HomeController(_categoryRepository, _stateRepository, _productRepository);
+			controller.About();
+			_productRepository.Received(0).GetProducts();
+			_productRepository.Received(0).GetProductById(Arg.Any<int>());
+			_productRepository.Received(0).GetProductByName(Arg.Any<string>());
+			_productRepository.Received(0).GetProductsFromCategory(Arg.Any<CategoryModel>());
+			_productRepository.Received(0).InsertProduct(Arg.Any<ProductModel>());
+			_productRepository.Received(0).InsertProduct(Arg.Any<string>(), Arg.Any<CategoryModel>());
+			_productRepository.Received(0).InsertProduct(Arg.Any<string>(), Arg.Any<int>());
+			_productRepository.Received(0).UpdateProduct(Arg.Any<ProductModel>());
+			_productRepository.Received(0).UpdateProduct(Arg.Any<int>(), Arg.Any<int>());
+			_productRepository.Received(0).UpdateProduct(Arg.Any<int>(), Arg.Any<CategoryModel>());
+			_productRepository.Received(0).DeleteProduct(Arg.Any<ProductModel>());
+			_productRepository.Received(0).DeleteProduct(Arg.Any<int>());
+			_productRepository.Received(0).DeleteProduct(Arg.Any<string>());
 		}
 	}
 }
