@@ -27,52 +27,67 @@ namespace zpi_aspnet_test.Controllers
 		[HttpPost]
 		public ActionResult Index(string product, string preferredPriceInput, int count)
 		{
-			var states = _stateDatabase.GetStates();
-			var products = _productDatabase.GetProducts();
-			var categories = _categoryDatabase.GetCategories();
+			if (product == null || string.IsNullOrEmpty(product) || preferredPriceInput == null ||
+				string.IsNullOrEmpty(preferredPriceInput) || count < 1)
+				throw new HttpException(403, "The server cannot process request due to malformed or empty syntax");
 
-			var chosenProduct = products.FirstOrDefault(p => p.Name.Equals(product.Trim())) ??
-								throw new HttpException(404, "Requested resource does not exist");
-
-			chosenProduct.PreferredPrice = ParsePrice(preferredPriceInput);
-
-			var stateNameList = new List<string>();
-			var finalPrice = new List<double>();
-			var tax = new List<double>();
-			var margin = new List<double>();
-
-			foreach (var state in states)
+			try
 			{
-				// State Name
-				stateNameList.Add(state.Name);
+				var states = _stateDatabase.GetStates();
+				var products = _productDatabase.GetProducts();
+				var categories = _categoryDatabase.GetCategories();
 
-				// Product final price in current state
-				Algorithm.CalculateFinalPrice(chosenProduct, state, count);
-				finalPrice.Add(chosenProduct.FinalPrice);
+				var chosenProduct = products.FirstOrDefault(p => p.Name.Equals(product.Trim())) ??
+									throw new HttpException(404, "Requested resource does not exist");
 
-				// Tax for current state
-				tax.Add(Algorithm.GetTax(chosenProduct, state, count));
+				chosenProduct.PreferredPrice = ParsePrice(preferredPriceInput);
 
-				// Margin for chosen product in current state
-				margin.Add(Algorithm.CalculateMargin(chosenProduct, count));
+				var stateNameList = new List<string>();
+				var finalPrice = new List<double>();
+				var tax = new List<double>();
+				var margin = new List<double>();
+
+				foreach (var state in states)
+				{
+					// State Name
+					stateNameList.Add(state.Name);
+
+					// Product final price in current state
+					Algorithm.CalculateFinalPrice(chosenProduct, state, count);
+					finalPrice.Add(chosenProduct.FinalPrice);
+
+					// Tax for current state
+					tax.Add(Algorithm.GetTax(chosenProduct, state, count));
+
+					// Margin for chosen product in current state
+					margin.Add(Algorithm.CalculateMargin(chosenProduct, count));
+				}
+
+				var mainViewModel = new MainViewModel
+				{
+					ProductSelectList = new SelectList(products, "Name", "Name"),
+					CategorySelectList = new SelectList(categories, "Name", "Name"),
+					StateSelectList = new SelectList(states, "Name", "Name"),
+					PurchasePrice = Math.Round(chosenProduct.PurchasePrice, 2),
+					PreferredPrice = chosenProduct.PreferredPrice,
+					NumberOfProducts = count,
+					Tax = tax,
+					Margin = margin,
+					FinalPrice = finalPrice,
+					StateNameList = stateNameList,
+					ChosenProduct = chosenProduct
+				};
+
+				return View(mainViewModel);
 			}
-
-			var mainViewModel = new MainViewModel
+			catch (HttpException)
 			{
-				ProductSelectList = new SelectList(products, "Name", "Name"),
-				CategorySelectList = new SelectList(categories, "Name", "Name"),
-				StateSelectList = new SelectList(states, "Name", "Name"),
-				PurchasePrice = Math.Round(chosenProduct.PurchasePrice, 2),
-				PreferredPrice = chosenProduct.PreferredPrice,
-				NumberOfProducts = count,
-				Tax = tax,
-				Margin = margin,
-				FinalPrice = finalPrice,
-				StateNameList = stateNameList,
-				ChosenProduct = chosenProduct
-			};
-
-			return View(mainViewModel);
+				throw;
+			}
+			catch (Exception)
+			{
+				throw new HttpException(500, "Server encountered the problem with access to demanded resources");
+			}
 		}
 	}
 }

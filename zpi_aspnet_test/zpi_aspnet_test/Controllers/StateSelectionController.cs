@@ -26,14 +26,12 @@ namespace zpi_aspnet_test.Controllers
 		// GET: StateSelection
 		public ActionResult Index(string product, string state, string preferredPriceInput = "0", int count = 1)
 		{
+			if (string.IsNullOrEmpty(product) || string.IsNullOrEmpty(state) || string.IsNullOrEmpty(preferredPriceInput) || count < 1)
+				throw new HttpException(403, "The server cannot process request due to malformed or empty syntax");
+
 			var productModels = _productDatabase.GetProducts();
 			var categoryModels = _categoryDatabase.GetCategories();
 			var stateOfAmericaModels = _stateDatabase.GetStates();
-
-			if (state == null || product == null)
-			{
-				throw new HttpException(403, "The server cannot process request due to malformed or empty syntax");
-			}
 
 			var chosenState = _stateDatabase.GetStateByName(state.Trim());
 			var chosenProduct = _productDatabase.GetProductByName(product.Trim());
