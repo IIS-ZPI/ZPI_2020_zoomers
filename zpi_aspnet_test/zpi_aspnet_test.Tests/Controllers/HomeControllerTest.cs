@@ -6,11 +6,11 @@ using NSubstitute.ExceptionExtensions;
 using zpi_aspnet_test.Controllers;
 using zpi_aspnet_test.DataBaseUtilities.Exceptions;
 using zpi_aspnet_test.DataBaseUtilities.Interfaces;
+using zpi_aspnet_test.Models;
 using Assert = NHamcrest.XUnit.Assert;
 using static NHamcrest.Is;
 using static zpi_aspnet_test.Tests.Matchers.DecoratorMatchers;
 using static NHamcrest.Has;
-using static Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
 namespace zpi_aspnet_test.Tests.Controllers
 {
@@ -20,7 +20,10 @@ namespace zpi_aspnet_test.Tests.Controllers
 		private ICategoryDatabaseAccess _categoryRepository;
 		private IStateDatabaseAccess _stateRepository;
 		private IProductDatabaseAccess _productRepository;
-		private const string ExpectedMessageOf500CodeForAccessTrouble = "Server encountered the problem with access to data";
+
+		private const string ExpectedMessageOf500CodeForAccessTrouble =
+			"Server encountered the problem with access to data";
+
 		private const string ExpectedMessage = "About this app";
 		private const int Http500 = 500;
 
@@ -106,13 +109,73 @@ namespace zpi_aspnet_test.Tests.Controllers
 			var controller = new HomeController(_categoryRepository, _stateRepository, _productRepository);
 
 			ActionResult Call() => controller.Index();
-			var exception = Assert.Throws<HttpException>(Call);
+			var exception = Xunit.Assert.Throws<HttpException>(Call);
 
 			var code = exception.GetHttpCode();
 			var message = exception.Message;
 
 			Assert.That(code, Is(EqualTo(Http500)));
 			Assert.That(message, Is(EqualTo(ExpectedMessageOf500CodeForAccessTrouble)));
+		}
+
+		[TestMethod]
+		public void ContactPageShouldNotCallStatesRepository()
+		{
+			var controller = new HomeController(_categoryRepository, _stateRepository, _productRepository);
+			controller.Contact();
+			_stateRepository.Received(0).GetStates();
+			_stateRepository.Received(0).GetStateById(Arg.Any<int>());
+			_stateRepository.Received(0).GetStateByName(Arg.Any<string>());
+			_stateRepository.Received(0).UpdateState(Arg.Any<StateOfAmericaModel>());
+			_stateRepository.Received(0).UpdateState(Arg.Any<int>());
+			_stateRepository.Received(0).InsertState(Arg.Any<StateOfAmericaModel>());
+			_stateRepository.Received(0).InsertState(Arg.Any<string>());
+			_stateRepository.Received(0).DeleteState(Arg.Any<StateOfAmericaModel>());
+			_stateRepository.Received(0).DeleteState(Arg.Any<int>());
+			_stateRepository.Received(0).DeleteState(Arg.Any<string>());
+		}
+
+		[TestMethod]
+		public void ContactPageShouldNotCallProductsRepository()
+		{
+			var controller = new HomeController(_categoryRepository, _stateRepository, _productRepository);
+			controller.Contact();
+			_productRepository.Received(0).GetProducts();
+			_productRepository.Received(0).GetProductById(Arg.Any<int>());
+			_productRepository.Received(0).GetProductByName(Arg.Any<string>());
+			_productRepository.Received(0).GetProductsFromCategory(Arg.Any<CategoryModel>());
+			_productRepository.Received(0).InsertProduct(Arg.Any<ProductModel>());
+			_productRepository.Received(0).InsertProduct(Arg.Any<string>(), Arg.Any<CategoryModel>());
+			_productRepository.Received(0).InsertProduct(Arg.Any<string>(), Arg.Any<int>());
+			_productRepository.Received(0).UpdateProduct(Arg.Any<ProductModel>());
+			_productRepository.Received(0).UpdateProduct(Arg.Any<int>(), Arg.Any<int>());
+			_productRepository.Received(0).UpdateProduct(Arg.Any<int>(), Arg.Any<CategoryModel>());
+			_productRepository.Received(0).DeleteProduct(Arg.Any<ProductModel>());
+			_productRepository.Received(0).DeleteProduct(Arg.Any<int>());
+			_productRepository.Received(0).DeleteProduct(Arg.Any<string>());
+		}
+
+		[TestMethod]
+		public void ContactPageShouldNotCallCategoriesRepository()
+		{
+			var controller = new HomeController(_categoryRepository, _stateRepository, _productRepository);
+			controller.Contact();
+			_categoryRepository.Received(0).GetCategories();
+			_categoryRepository.Received(0).GetCategoryById(Arg.Any<int>());
+			_categoryRepository.Received(0).GetCategoryByName(Arg.Any<string>());
+			_categoryRepository.Received(0).UpdateCategory(Arg.Any<CategoryModel>());
+			_categoryRepository.Received(0).DeleteCategory(Arg.Any<CategoryModel>());
+			_categoryRepository.Received(0).DeleteCategory(Arg.Any<int>());
+			_categoryRepository.Received(0).DeleteCategory(Arg.Any<string>());
+			_categoryRepository.Received(0).UpdateCategory(Arg.Any<int>(), Arg.Any<string>());
+			_categoryRepository.Received(0).InsertCategory(Arg.Any<CategoryModel>());
+			_categoryRepository.Received(0).InsertCategory(Arg.Any<string>());
+		}
+
+		[TestMethod]
+		public void AboutPageShouldNotCallCategoriesRepository()
+		{
+			
 		}
 	}
 }
