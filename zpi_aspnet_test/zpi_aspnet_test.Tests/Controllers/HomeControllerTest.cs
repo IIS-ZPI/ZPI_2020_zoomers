@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
-using zpi_aspnet_test;
 using zpi_aspnet_test.Controllers;
 using zpi_aspnet_test.DataBaseUtilities.Interfaces;
+using Assert = NHamcrest.XUnit.Assert;
+using static NHamcrest.Is;
+using static zpi_aspnet_test.Tests.Matchers.DecoratorMatchers;
+using static NHamcrest.Has;
 
 namespace zpi_aspnet_test.Tests.Controllers
 {
@@ -17,6 +16,7 @@ namespace zpi_aspnet_test.Tests.Controllers
 		private ICategoryDatabaseAccess _categoryRepository;
 		private IStateDatabaseAccess _stateRepository;
 		private IProductDatabaseAccess _productRepository;
+		private const string ExpectedMessage = "About this app";
 
 		[TestInitialize]
 		public void Setup()
@@ -27,42 +27,45 @@ namespace zpi_aspnet_test.Tests.Controllers
 		}
 
 		[TestMethod]
-		public void Index()
+		public void IndexPageShouldNotBeNullIfNoneErrorOccurred()
 		{
 			// Arrange
-			HomeController controller = new HomeController(_categoryRepository, _stateRepository, _productRepository);
+			var controller = new HomeController(_categoryRepository, _stateRepository, _productRepository);
 
 			// Act
-			ViewResult result = controller.Index() as ViewResult;
+			var result = controller.Index() as ViewResult;
 
 			// Assert
-			Assert.IsNotNull(result);
+			Assert.That(result, Is(NotNull()));
 		}
 
 		[TestMethod]
-		public void About()
+		public void AboutPageShouldNotBeNullAndShouldHaveSpecifiedMessageIfNoneErrorOccurred()
 		{
 			// Arrange
-			HomeController controller = new HomeController(_categoryRepository, _stateRepository, _productRepository);
+			var controller = new HomeController(_categoryRepository, _stateRepository, _productRepository);
 
 			// Act
-			ViewResult result = controller.About() as ViewResult;
+			var result = controller.About() as ViewResult;
 
 			// Assert
-			Assert.AreEqual("About this app", result.ViewBag.Message);
+			Assert.That(result, Is(NotNull()));
+			Assert.That(result?.ViewBag, Is(NotNull()));
+			var message = result?.ViewBag?.Message;
+			Assert.That(message, Is(EqualTo(ExpectedMessage)));
 		}
 
 		[TestMethod]
-		public void Contact()
+		public void ContactPageShouldNotBeNullIfNoneErrorOccurred()
 		{
 			// Arrange
-			HomeController controller = new HomeController(_categoryRepository, _stateRepository, _productRepository);
+			var controller = new HomeController(_categoryRepository, _stateRepository, _productRepository);
 
 			// Act
-			ViewResult result = controller.Contact() as ViewResult;
+			var result = controller.Contact() as ViewResult;
 
 			// Assert
-			Assert.IsNotNull(result);
+			Assert.That(result, Is(NotNull()));
 		}
 	}
 }
