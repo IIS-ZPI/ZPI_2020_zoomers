@@ -1,73 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using NHamcrest;
-using NHamcrest.Core;
 
 namespace zpi_aspnet_test.Tests.Matchers
 {
 	public static class DecoratorMatchers
 	{
-		public static Matcher<T> Is<T>(Matcher<T> toDecorate)
+		public static IMatcher<T> Is<T>(IMatcher<T> toDecorate)
 		{
 			return new Is<T>(toDecorate);
 		}
 
-		public static Matcher<T> Has<T>(Matcher<T> toDecorate)
+		public static IMatcher<T> Has<T>(IMatcher<T> toDecorate)
 		{
 			return new Has<T>(toDecorate);
 		}
-	}
 
-	public class Has<T> : Matcher<T>
-	{
-		private readonly Matcher<T> _toDecorate;
-
-		public Has(Matcher<T> toDecorate)
+		public static IMatcher<T> Is<T>(T item)
 		{
-			_toDecorate = toDecorate;
+			return new Is<T>(item);
 		}
 
-		public override bool Matches(T item)
+		public static IMatcher<ICollection<T>> CollectionEqualTo<T>(ICollection<T> items)
 		{
-			return _toDecorate.Matches(item);
-		}
-
-		public override void DescribeTo(IDescription description)
-		{
-			_toDecorate.DescribeTo(description);
-		}
-
-		public override void DescribeMismatch(T item, IDescription mismatchDescription)
-		{
-			_toDecorate.DescribeMismatch(item, mismatchDescription);
-		}
-	}
-
-	public class Is<T> : Matcher<T>
-	{
-		private readonly Matcher<T> _decoratedMatcher;
-
-		public Is(Matcher<T> toDecorate)
-		{
-			_decoratedMatcher = toDecorate;
-		}
-
-		public override bool Matches(T item)
-		{
-			return _decoratedMatcher.Matches(item);
-		}
-
-		public override void DescribeTo(IDescription description)
-		{
-			_decoratedMatcher.DescribeTo(description);
-		}
-
-		public override void DescribeMismatch(T item, IDescription mismatchDescription)
-		{
-			_decoratedMatcher.DescribeMismatch(item, mismatchDescription);
+			return new CollectionMatcher<T>(items);
 		}
 	}
 }

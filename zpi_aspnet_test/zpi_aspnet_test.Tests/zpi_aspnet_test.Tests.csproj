@@ -113,10 +113,13 @@
     <Compile Include="Builders\ProductBuilder.cs" />
     <Compile Include="Builders\StateBuilder.cs" />
     <Compile Include="Builders\TaxBuilder.cs" />
+    <Compile Include="Matchers\CollectionMatcher.cs" />
     <Compile Include="Matchers\DecoratorMatchers.cs" />
     <Compile Include="Matchers\DoesNotThrow.cs" />
     <Compile Include="Feature_Parser.Tests\ParserTestsScenario.cs" />
     <Compile Include="Matchers\DoesNotThrowMatcher.cs" />
+    <Compile Include="Matchers\Has.cs" />
+    <Compile Include="Matchers\Is.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Controllers\HomeControllerTest.cs" />
   </ItemGroup>
