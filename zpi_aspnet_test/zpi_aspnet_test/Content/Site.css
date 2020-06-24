@@ -144,7 +144,9 @@ textarea {
         font-size: 0.7rem;
     }
 }
-
+.btn:hover {
+	background: red;
+}
     
 .nav-link.active{
     color:red !important;
