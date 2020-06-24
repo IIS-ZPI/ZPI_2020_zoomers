@@ -313,7 +313,14 @@ namespace zpi_aspnet_test.Tests.Controllers
 			Assert.That(productsList, Is<ICollection>(Not(OfLength(0))));
 			Assert.That(statesList, Is<ICollection>(Not(OfLength(0))));
 			Assert.That(categoriesList, Is<ICollection>(Not(OfLength(0))));
+			
+			Assert.That(productsList, Has(Item(EqualTo(_expectedProduct))));
+			Assert.That(categoriesList, Has(Item(EqualTo(_expectedCategory))));
+			Assert.That(statesList, Has(Item(EqualTo(_expectedState))));
 
+			var state = statesList?.FirstOrDefault();
+
+			Assert.That(state?.TaxRates, Has(Item((EqualTo(_expectedTax)))));
 		}
 	}
 }
