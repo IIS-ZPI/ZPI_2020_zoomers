@@ -2,7 +2,7 @@
 using NHamcrest;
 using NHamcrest.Core;
 
-namespace zpi_aspnet_test.Tests
+namespace zpi_aspnet_test.Tests.Matchers
 {
 	public class DoesNotThrowMatcher<T> : DiagnosingMatcher<Action> where T : Exception
 	{

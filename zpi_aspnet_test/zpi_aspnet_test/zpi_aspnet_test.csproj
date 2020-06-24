@@ -167,6 +167,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\CategoryModel.cs" />
+    <Compile Include="Utilities\DoubleUtilities.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Models\ProductModel.cs" />
     <Compile Include="Models\StateOfAmericaModel.cs" />

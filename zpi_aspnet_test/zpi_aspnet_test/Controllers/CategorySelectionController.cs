@@ -1,37 +1,63 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Linq;
+using System.Web;
 using System.Web.Mvc;
+using zpi_aspnet_test.DataBaseUtilities.Exceptions;
 using zpi_aspnet_test.DataBaseUtilities.Interfaces;
-using zpi_aspnet_test.Models;
 using zpi_aspnet_test.ViewModels;
 
 namespace zpi_aspnet_test.Controllers
 {
-    public class CategorySelectionController : Controller
-    {
-	    private readonly ICategoryDatabaseAccess _categoryRepository;
-	    private readonly IStateDatabaseAccess _stateRepository;
-	    private readonly IProductDatabaseAccess _productRepository;
+	public class CategorySelectionController : Controller
+	{
+		private readonly ICategoryDatabaseAccess _categoryRepository;
+		private readonly IStateDatabaseAccess _stateRepository;
+		private readonly IProductDatabaseAccess _productRepository;
 
-	    public CategorySelectionController(ICategoryDatabaseAccess categoryRepository, IStateDatabaseAccess stateRepository, IProductDatabaseAccess productRepository)
-	    {
-		    _categoryRepository = categoryRepository;
-		    _stateRepository = stateRepository;
-		    _productRepository = productRepository;
-	    }
+		public CategorySelectionController(ICategoryDatabaseAccess categoryRepository,
+			IStateDatabaseAccess stateRepository, IProductDatabaseAccess productRepository)
+		{
+			_categoryRepository = categoryRepository;
+			_stateRepository = stateRepository;
+			_productRepository = productRepository;
+		}
 
-	    [HttpPost]
-        public ActionResult Index(string category)
-        {
-            MainViewModel mainViewModel = new MainViewModel();
-            mainViewModel.ProductSelectList = new SelectList(_productRepository.GetProducts(), "Name", "Name");
-            mainViewModel.CategorySelectList = new SelectList(_categoryRepository.GetCategories(), "Name", "Name");
-            mainViewModel.StateSelectList = new SelectList(_stateRepository.GetStates(), "Name", "Name");
+		[HttpPost]
+		public ActionResult Index(string category)
+		{
+			if (category == null || string.IsNullOrEmpty(category))
+				throw new HttpException(403, "The server cannot process request due to malformed or empty syntax");
 
-            mainViewModel.ProductList = new List<ProductModel>(
-                _productRepository.GetProductsFromCategory(_categoryRepository.GetCategoryByName(category)));
-            mainViewModel.Category = category;
+			try
+			{
+				var productModels = _productRepository.GetProducts();
+				var categoryModels = _categoryRepository.GetCategories();
+				var stateOfAmericaModels = _stateRepository.GetStates();
 
-            return View(mainViewModel);
-        }
-    }
+				var mainViewModel = new MainViewModel
+				{
+					ProductSelectList = new SelectList(productModels, "Name", "Name"),
+					CategorySelectList = new SelectList(categoryModels, "Name", "Name"),
+					StateSelectList = new SelectList(stateOfAmericaModels, "Name", "Name"),
+					ProductList =
+						productModels.Where(product => product.Category.Name.Equals(category.Trim())).ToList(),
+					Category = category
+				};
+
+				return View(mainViewModel);
+			}
+			catch (AccessToNotConnectedDatabaseException)
+			{
+				throw new HttpException(500, "Server encountered the problem with access to data");
+			}
+			catch (ItemNotFoundException)
+			{
+				throw new HttpException(404, "Requested resource does not exist");
+			}
+			catch (Exception)
+			{
+				throw new HttpException(500, "Server encountered some problems, please contact support");
+			}
+		}
+	}
 }

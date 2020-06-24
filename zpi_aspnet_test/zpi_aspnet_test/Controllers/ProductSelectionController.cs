@@ -1,92 +1,102 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
+using System.Linq;
+using System.Web;
 using System.Web.Mvc;
 using zpi_aspnet_test.Algorithms;
+using zpi_aspnet_test.DataBaseUtilities.Exceptions;
 using zpi_aspnet_test.DataBaseUtilities.Interfaces;
-using zpi_aspnet_test.Models;
 using zpi_aspnet_test.ViewModels;
+using static zpi_aspnet_test.Utilities.DoubleUtilities;
 
 namespace zpi_aspnet_test.Controllers
 {
-    public class ProductSelectionController : Controller
-    {
-	    private readonly IStateDatabaseAccess _stateDatabase;
-	    private readonly ICategoryDatabaseAccess _categoryDatabase;
-	    private readonly IProductDatabaseAccess _productDatabase;
+	public class ProductSelectionController : Controller
+	{
+		private readonly IStateDatabaseAccess _stateDatabase;
+		private readonly ICategoryDatabaseAccess _categoryDatabase;
+		private readonly IProductDatabaseAccess _productDatabase;
 
-	    public ProductSelectionController(IStateDatabaseAccess stateDatabase, ICategoryDatabaseAccess categoryDatabase, IProductDatabaseAccess productDatabase)
-	    {
-		    _stateDatabase = stateDatabase;
-		    _categoryDatabase = categoryDatabase;
-		    _productDatabase = productDatabase;
-	    }
+		public ProductSelectionController(IStateDatabaseAccess stateDatabase, ICategoryDatabaseAccess categoryDatabase,
+			IProductDatabaseAccess productDatabase)
+		{
+			_stateDatabase = stateDatabase;
+			_categoryDatabase = categoryDatabase;
+			_productDatabase = productDatabase;
+		}
 
-	    [HttpPost]
-        public ActionResult Index(string product, string preferredPriceInput, int count)
-        {
-	        MainViewModel mainViewModel = new MainViewModel
-	        {
-		        ProductSelectList = new SelectList(_productDatabase.GetProducts(), "Name", "Name"),
-		        CategorySelectList = new SelectList(_categoryDatabase.GetCategories(), "Name", "Name"),
-		        StateSelectList = new SelectList(_stateDatabase.GetStates(), "Name", "Name")
+		[HttpPost]
+		public ActionResult Index(string product, string preferredPriceInput, int count)
+		{
+			if (product == null || string.IsNullOrEmpty(product) || preferredPriceInput == null ||
+				string.IsNullOrEmpty(preferredPriceInput) || count < 1)
+				throw new HttpException(403, "The server cannot process request due to malformed or empty syntax");
 
-	        };
+			try
+			{
+				var states = _stateDatabase.GetStates();
+				var products = _productDatabase.GetProducts();
+				var categories = _categoryDatabase.GetCategories();
 
-	        List<StateOfAmericaModel> stateList = new List<StateOfAmericaModel>(_stateDatabase.GetStates());
+				var chosenProduct = products.FirstOrDefault(p => p.Name.Equals(product.Trim())) ??
+									throw new HttpException(404, "Requested resource does not exist");
 
-            ProductModel chosenProduct = _productDatabase.GetProductByName(product.Trim());
+				chosenProduct.PreferredPrice = ParsePrice(preferredPriceInput);
 
-            NumberFormatInfo format = new NumberFormatInfo();
-            if (preferredPriceInput.Contains(".") && preferredPriceInput.Contains(","))
-            {
-                format.NumberGroupSeparator = ",";
-                format.NumberDecimalSeparator = ".";
-            }
-            else if (preferredPriceInput.Contains("."))
-            {
-                format.NumberDecimalSeparator = ".";
-            }
-            else if (preferredPriceInput.Contains(","))
-            {
-                format.NumberDecimalSeparator = ",";
-            }
+				var stateNameList = new List<string>();
+				var finalPrice = new List<double>();
+				var tax = new List<double>();
+				var margin = new List<double>();
 
-            chosenProduct.PreferredPrice = Convert.ToDouble(preferredPriceInput, format);
+				foreach (var state in states)
+				{
+					// State Name
+					stateNameList.Add(state.Name);
 
-            mainViewModel.PurchasePrice = Math.Round(chosenProduct.PurchasePrice, 2);
-            mainViewModel.PreferredPrice = chosenProduct.PreferredPrice;
-            mainViewModel.NumberOfProducts = count;
+					// Product final price in current state
+					Algorithm.CalculateFinalPrice(chosenProduct, state, count);
+					finalPrice.Add(chosenProduct.FinalPrice);
 
-            var stateNameList = new List<string>();
-            var finalPrice = new List<double>();
-            var tax = new List<double>();
-            var margin = new List<double>();
-            
+					// Tax for current state
+					tax.Add(Algorithm.GetTax(chosenProduct, state, count));
 
-            foreach (var state in stateList)
-            {
-                // State Name
-                stateNameList.Add(state.Name);
+					// Margin for chosen product in current state
+					margin.Add(Algorithm.CalculateMargin(chosenProduct, count));
+				}
 
-                // Product final price in current state
-                Algorithm.CalculateFinalPrice(chosenProduct, state, mainViewModel.NumberOfProducts);
-                finalPrice.Add(chosenProduct.FinalPrice);
+				var mainViewModel = new MainViewModel
+				{
+					ProductSelectList = new SelectList(products, "Name", "Name"),
+					CategorySelectList = new SelectList(categories, "Name", "Name"),
+					StateSelectList = new SelectList(states, "Name", "Name"),
+					PurchasePrice = Math.Round(chosenProduct.PurchasePrice, 2),
+					PreferredPrice = chosenProduct.PreferredPrice,
+					NumberOfProducts = count,
+					Tax = tax,
+					Margin = margin,
+					FinalPrice = finalPrice,
+					StateNameList = stateNameList,
+					ChosenProduct = chosenProduct
+				};
 
-                // Tax for current state
-                tax.Add(Algorithm.GetTax(chosenProduct, state, mainViewModel.NumberOfProducts));
-
-                // Margin for chosen product in current state
-                margin.Add(Algorithm.CalculateMargin(chosenProduct, mainViewModel.NumberOfProducts));
-            }
-
-            mainViewModel.Tax = tax;
-            mainViewModel.Margin = margin;
-            mainViewModel.FinalPrice = finalPrice;
-            mainViewModel.StateNameList = stateNameList;
-            mainViewModel.ChosenProduct = chosenProduct;
-
-            return View(mainViewModel);
-        }
-    }
+				return View(mainViewModel);
+			}
+			catch (HttpException)
+			{
+				throw;
+			}
+			catch (AccessToNotConnectedDatabaseException)
+			{
+				throw new HttpException(500, "Server encountered the problem with access to data");
+			}
+			catch (ItemNotFoundException)
+			{
+				throw new HttpException(404, "Requested resource does not exist");
+			}
+			catch (Exception)
+			{
+				throw new HttpException(500, "Server encountered some problems, please contact support");
+			}
+		}
+	}
 }

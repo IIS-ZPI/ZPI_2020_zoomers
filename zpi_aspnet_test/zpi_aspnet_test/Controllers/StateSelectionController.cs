@@ -1,102 +1,90 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
+using System.Web;
 using System.Web.Mvc;
 using zpi_aspnet_test.Algorithms;
+using zpi_aspnet_test.DataBaseUtilities.Exceptions;
 using zpi_aspnet_test.DataBaseUtilities.Interfaces;
-using zpi_aspnet_test.Models;
 using zpi_aspnet_test.ViewModels;
+using static zpi_aspnet_test.Utilities.DoubleUtilities;
 
 namespace zpi_aspnet_test.Controllers
 {
-    public class StateSelectionController : Controller
-    {
-	    private readonly IStateDatabaseAccess _stateDatabase;
-	    private readonly ICategoryDatabaseAccess _categoryDatabase;
-	    private readonly IProductDatabaseAccess _productDatabase;
+	public class StateSelectionController : Controller
+	{
+		private readonly IStateDatabaseAccess _stateDatabase;
+		private readonly ICategoryDatabaseAccess _categoryDatabase;
+		private readonly IProductDatabaseAccess _productDatabase;
 
-	    public StateSelectionController(IStateDatabaseAccess stateDatabase, ICategoryDatabaseAccess categoryDatabase, IProductDatabaseAccess productDatabase)
-	    {
-		    _stateDatabase = stateDatabase;
-		    _categoryDatabase = categoryDatabase;
-		    _productDatabase = productDatabase;
-	    }
+		public StateSelectionController(IStateDatabaseAccess stateDatabase, ICategoryDatabaseAccess categoryDatabase,
+			IProductDatabaseAccess productDatabase)
+		{
+			_stateDatabase = stateDatabase;
+			_categoryDatabase = categoryDatabase;
+			_productDatabase = productDatabase;
+		}
 
-	    // GET: StateSelection
-        public ActionResult Index(string product, string state, string preferredPriceInput="0", int count=1)
-        {
-            
-            MainViewModel mainViewModel = new MainViewModel();
-            mainViewModel.ProductSelectList = new SelectList(_productDatabase.GetProducts(), "Name", "Name");
-            mainViewModel.CategorySelectList = new SelectList(_categoryDatabase.GetCategories(), "Name", "Name");
-            mainViewModel.StateSelectList = new SelectList(_stateDatabase.GetStates(), "Name", "Name");
-            if (state == null || product == null)
-            {
-                mainViewModel.ChosenProduct = new ProductModel();
-                mainViewModel.PurchasePrice = 0;
-                mainViewModel.PreferredPrice = 0;
-                mainViewModel.NumberOfProducts = 0;
-                mainViewModel.ChosenState = new StateOfAmericaModel();
+		// GET: StateSelection
+		public ActionResult Index(string product, string state, string preferredPriceInput = "0", int count = 1)
+		{
+			if (string.IsNullOrEmpty(product) || string.IsNullOrEmpty(state) ||
+				string.IsNullOrEmpty(preferredPriceInput) || count < 1)
+				throw new HttpException(403, "The server cannot process request due to malformed or empty syntax");
 
-                mainViewModel.Tax = new List<double> { 6.9 };
-                mainViewModel.Margin = new List<double> { 6.9 };
-                mainViewModel.FinalPrice = new List<double> { 6.9 };
-                mainViewModel.StateNameList = new List<string>();
+			try
+			{
+				var productModels = _productDatabase.GetProducts();
+				var categoryModels = _categoryDatabase.GetCategories();
+				var stateOfAmericaModels = _stateDatabase.GetStates();
 
-                return View(mainViewModel);
-            }
+				var chosenState = _stateDatabase.GetStateByName(state.Trim());
+				var chosenProduct = _productDatabase.GetProductByName(product.Trim());
 
-            StateOfAmericaModel chosenState = _stateDatabase.GetStateByName(state.Trim());
-            ProductModel chosenProduct = _productDatabase.GetProductByName(product.Trim());
+				chosenProduct.PreferredPrice = ParsePrice(preferredPriceInput);
 
+				// State Name
+				var stateNameList = new List<string> {chosenState.Name};
 
-            NumberFormatInfo format = new NumberFormatInfo();
-            if (preferredPriceInput.Contains(".") && preferredPriceInput.Contains(","))
-            {
-                format.NumberGroupSeparator = ",";
-                format.NumberDecimalSeparator = ".";
-            }else if (preferredPriceInput.Contains("."))
-            {
-                format.NumberDecimalSeparator = ".";
-            }
-            else if (preferredPriceInput.Contains(","))
-            {
-                format.NumberDecimalSeparator = ",";
-            }
+				// Product final price in current state
+				Algorithm.CalculateFinalPrice(chosenProduct, chosenState, count);
+				var finalPriceList = new List<double> {chosenProduct.FinalPrice};
 
+				// Tax for current state
+				var taxes = new List<double> {Algorithm.GetTax(chosenProduct, chosenState, count)};
 
+				// Margin for chosen product in current state
+				var margins = new List<double> {Algorithm.CalculateMargin(chosenProduct, count)};
 
-            chosenProduct.PreferredPrice = Convert.ToDouble(preferredPriceInput, format);
+				var mainViewModel = new MainViewModel
+				{
+					ProductSelectList = new SelectList(productModels, "Name", "Name"),
+					CategorySelectList = new SelectList(categoryModels, "Name", "Name"),
+					StateSelectList = new SelectList(stateOfAmericaModels, "Name", "Name"),
+					Tax = taxes,
+					Margin = margins,
+					FinalPrice = finalPriceList,
+					StateNameList = stateNameList,
+					ChosenProduct = chosenProduct,
+					PurchasePrice = Math.Round(chosenProduct.PurchasePrice, 2),
+					PreferredPrice = chosenProduct.PreferredPrice,
+					NumberOfProducts = count,
+					ChosenState = chosenState
+				};
 
-            mainViewModel.ChosenProduct = chosenProduct;//duplicate line ?
-            mainViewModel.PurchasePrice = Math.Round(chosenProduct.PurchasePrice, 2);
-            mainViewModel.PreferredPrice = chosenProduct.PreferredPrice;
-            mainViewModel.NumberOfProducts = count;
-            mainViewModel.ChosenState = chosenState;
-
-            var stateNameList = new List<string>();
-            var finalPrice = new List<double>();
-            var tax = new List<double>();
-            var margin = new List<double>();
-
-            // State Name
-            stateNameList.Add(chosenState.Name);
-
-            // Product final price in current state
-            Algorithm.CalculateFinalPrice(chosenProduct, chosenState, mainViewModel.NumberOfProducts);
-            finalPrice.Add(chosenProduct.FinalPrice);
-
-            // Tax for current state
-            tax.Add(Algorithm.GetTax(chosenProduct, chosenState, mainViewModel.NumberOfProducts));
-
-            // Margin for chosen product in current state
-            margin.Add(Algorithm.CalculateMargin(chosenProduct, mainViewModel.NumberOfProducts));
-            mainViewModel.Tax = tax;
-            mainViewModel.Margin = margin;
-            mainViewModel.FinalPrice = finalPrice;
-            mainViewModel.StateNameList = stateNameList;
-            mainViewModel.ChosenProduct = chosenProduct;//duplicate line ?
-            return View(mainViewModel);
-        }
-    }
+				return View(mainViewModel);
+			}
+			catch (AccessToNotConnectedDatabaseException)
+			{
+				throw new HttpException(500, "Server encountered the problem with access to data");
+			}
+			catch (ItemNotFoundException)
+			{
+				throw new HttpException(404, "Requested resource does not exist");
+			}
+			catch (Exception)
+			{
+				throw new HttpException(500, "Server encountered some problems, please contact support");
+			}
+		}
+	}
 }
