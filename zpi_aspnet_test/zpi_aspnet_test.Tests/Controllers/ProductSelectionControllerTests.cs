@@ -124,5 +124,47 @@ namespace zpi_aspnet_test.Tests.Controllers
 			Assert.That(code, Is(EqualTo(exception2.GetHttpCode())));
 			Assert.That(message, Is(EqualTo(exception2.Message)));
 		}
-	}
+
+		[TestMethod]
+		public void IndexShouldThrowHttpExceptionWithCode403AndSpecifiedMessageIfPreferredPriceStringWillBeNullOrEmpty()
+		{
+			_productRepository.GetProducts().Returns(_preparedProducts);
+			var controller = new ProductSelectionController(_stateRepository, _categoryRepository, _productRepository);
+
+			ActionResult Call() => controller.Index(ProductName, Empty,
+				ExampleCorrectCount);
+
+			ActionResult CallWithNull() => controller.Index(ProductName, null,
+				ExampleCorrectCount);
+
+			var exception = Xunit.Assert.Throws<HttpException>(Call);
+			var exception2 = Xunit.Assert.Throws<HttpException>(CallWithNull);
+
+			var code = exception.GetHttpCode();
+			var message = exception.Message;
+
+			Assert.That(code, Is(EqualTo(Http403)));
+			Assert.That(message, Is(EqualTo(ExpectedMessageFor403Code)));
+			Assert.That(code, Is(EqualTo(exception2.GetHttpCode())));
+			Assert.That(message, Is(EqualTo(exception2.Message)));
+		}
+
+		[TestMethod]
+		public void IndexShouldThrowHttpExceptionWithCode403AndSpecifiedMessageIfCountWillBeNegative()
+		{
+			_productRepository.GetProducts().Returns(_preparedProducts);
+			var controller = new ProductSelectionController(_stateRepository, _categoryRepository, _productRepository);
+
+			ActionResult Call() => controller.Index(ProductName, ExampleCorrectPreferredPriceInput,
+				ExampleIncorrectCount);
+
+			var exception = Xunit.Assert.Throws<HttpException>(Call);
+
+			var code = exception.GetHttpCode();
+			var message = exception.Message;
+
+			Assert.That(code, Is(EqualTo(Http403)));
+			Assert.That(message, Is(EqualTo(ExpectedMessageFor403Code)));
+		}
+   }
 }

@@ -10,6 +10,6 @@
 	   public const int Http403 = 403;
 	   public const int Http404 = 404;
 	   public const int ExampleCorrectCount = 2138;
-
+	   public const int ExampleIncorrectCount = -1489;
    }
 }
