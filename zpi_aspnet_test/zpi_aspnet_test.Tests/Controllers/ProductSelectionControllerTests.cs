@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Web;
 using System.Web.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using zpi_aspnet_test.Controllers;
+using zpi_aspnet_test.DataBaseUtilities.Exceptions;
 using zpi_aspnet_test.DataBaseUtilities.Interfaces;
 using zpi_aspnet_test.Models;
 using static zpi_aspnet_test.Tests.Matchers.DecoratorMatchers;
@@ -166,5 +169,60 @@ namespace zpi_aspnet_test.Tests.Controllers
 			Assert.That(code, Is(EqualTo(Http403)));
 			Assert.That(message, Is(EqualTo(ExpectedMessageFor403Code)));
 		}
-   }
+
+		[TestMethod]
+		public void IndexShouldThrowHttpExceptionWithCode404AndSpecifiedMessageIfNoneProductWillBeAvailable()
+		{
+			var controller = new ProductSelectionController(_stateRepository, _categoryRepository, _productRepository);
+
+			ActionResult Call() => controller.Index(ProductName, ExampleCorrectPreferredPriceInput,
+				ExampleCorrectCount);
+
+			var exception = Xunit.Assert.Throws<HttpException>(Call);
+
+			var code = exception.GetHttpCode();
+			var message = exception.Message;
+
+			Assert.That(code, Is(EqualTo(Http404)));
+			Assert.That(message, Is(EqualTo(ExpectedMessageOf404Code)));
+		}
+
+		[TestMethod]
+		public void
+			IndexShouldThrowHttpExceptionWithCode500AndSpecifiedMessageForAccessToDbIssuesIfAnyRepositoryThrewAnAccessToNotConnectedDatabaseException()
+		{
+			_stateRepository.GetStates().Throws(new AccessToNotConnectedDatabaseException());
+			var controller = new ProductSelectionController(_stateRepository, _categoryRepository, _productRepository);
+
+			ActionResult Call() => controller.Index(ProductName, ExampleCorrectPreferredPriceInput,
+				ExampleCorrectCount);
+
+			var exception = Xunit.Assert.Throws<HttpException>(Call);
+
+			var code = exception.GetHttpCode();
+			var message = exception.Message;
+
+			Assert.That(code, Is(EqualTo(Http500)));
+			Assert.That(message, Is(EqualTo(ExpectedMessageOf500CodeForAccessTrouble)));
+		}
+
+		[TestMethod]
+		public void
+			IndexShouldThrowHttpExceptionWithCode500AndSpecifiedMessageForAccessToDbIssuesIfAnyRepositoryThrewAnException()
+		{
+			_productRepository.GetProducts().Throws(new Exception());
+			var controller = new ProductSelectionController(_stateRepository, _categoryRepository, _productRepository);
+
+			ActionResult Call() => controller.Index(ProductName, ExampleCorrectPreferredPriceInput,
+				ExampleCorrectCount);
+
+			var exception = Xunit.Assert.Throws<HttpException>(Call);
+
+			var code = exception.GetHttpCode();
+			var message = exception.Message;
+
+			Assert.That(code, Is(EqualTo(Http500)));
+			Assert.That(message, Is(EqualTo(ExpectedMessageOf500CodeForAnyException)));
+		}
+	}
 }
