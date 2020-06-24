@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Web;
 using System.Web.Mvc;
+using System.Collections;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
@@ -9,8 +11,10 @@ using zpi_aspnet_test.Controllers;
 using zpi_aspnet_test.DataBaseUtilities.Exceptions;
 using zpi_aspnet_test.DataBaseUtilities.Interfaces;
 using zpi_aspnet_test.Models;
+using zpi_aspnet_test.ViewModels;
 using static zpi_aspnet_test.Tests.Matchers.DecoratorMatchers;
 using static NHamcrest.Is;
+using static NHamcrest.Has;
 using static zpi_aspnet_test.Tests.Builders.ProductBuilder;
 using static zpi_aspnet_test.Tests.Builders.StateBuilder;
 using static zpi_aspnet_test.Tests.Builders.TaxBuilder;
@@ -223,6 +227,47 @@ namespace zpi_aspnet_test.Tests.Controllers
 
 			Assert.That(code, Is(EqualTo(Http500)));
 			Assert.That(message, Is(EqualTo(ExpectedMessageOf500CodeForAnyException)));
+		}
+
+		[TestMethod]
+		public void IfIndexWillBeCorrectlyInvokedThenMainViewModelOfActionResultShouldMatchingToExpectedOne()
+		{
+			_stateRepository.GetStates().Returns(_preparedStates);
+			_productRepository.GetProducts().Returns(_preparedProducts);
+			_categoryRepository.GetCategories().Returns(_preparedCategories);
+
+			var controller = new ProductSelectionController(_stateRepository, _categoryRepository, _productRepository);
+
+			var result = controller.Index(ProductName, ExampleCorrectPreferredPriceInput,
+				1) as ViewResult;
+
+			Assert.That(result, Is(NotNull()));
+
+			var viewModel = result?.Model as MainViewModel;
+
+			Assert.That(viewModel, Is(NotNull()));
+
+			var productsList = viewModel?.ProductSelectList.Items.Cast<ProductModel>().ToList();
+			var statesList = viewModel?.StateSelectList.Items.Cast<StateOfAmericaModel>().ToList();
+			var categoriesList = viewModel?.CategorySelectList.Items.Cast<CategoryModel>().ToList();
+
+			Assert.That(productsList, Is<ICollection>(Not(OfLength(0))));
+			Assert.That(statesList, Is<ICollection>(Not(OfLength(0))));
+			Assert.That(categoriesList, Is<ICollection>(Not(OfLength(0))));
+
+			Assert.That(productsList, Has(Item(EqualTo(_expectedProduct))));
+			Assert.That(categoriesList, Has(Item(EqualTo(_expectedCategory))));
+			Assert.That(statesList, Has(Item(EqualTo(_expectedState))));
+
+			var state = statesList?.FirstOrDefault();
+			Assert.That(state?.TaxRates, Has(Item((EqualTo(_expectedTax)))));
+			var taxes = viewModel?.Tax;
+			Assert.That(taxes, Has(Item(EqualTo(_expectedState.BaseSalesTax))));
+			var chosenProduct = viewModel?.ChosenProduct;
+			Assert.That(chosenProduct, Is(EqualTo(_expectedProduct)));
+			Assert.That(viewModel?.StateNameList, Has(Item(EqualTo(StateName))));
+			Assert.That(viewModel?.PreferredPrice ?? 0, Is(EqualTo(PreferredPrice)));
+			Assert.That(viewModel?.FinalPrice, Has(Item(EqualTo(PreferredPrice))));
 		}
 	}
 }
