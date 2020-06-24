@@ -193,7 +193,7 @@ namespace zpi_aspnet_test.Tests.Controllers
 
 		[TestMethod]
 		public void
-			IndexShouldThrowHttpExceptionWithCode404AndSpecifiedMessageIfAnyRepositoryThrewItemNotFoundExxception()
+			IndexShouldThrowHttpExceptionWithCode404AndSpecifiedMessageIfAnyRepositoryThrewItemNotFoundException()
 		{
 			_stateRepository.GetStates().Throws(new ItemNotFoundException());
 			var controller = new ProductSelectionController(_stateRepository, _categoryRepository, _productRepository);
