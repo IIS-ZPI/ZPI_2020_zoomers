@@ -32,7 +32,7 @@ namespace zpi_aspnet_test.Tests.Controllers
 		private StateOfAmericaModel _expectedState;
 		private TaxModel _expectedTax;
 		private ProductModel _expectedProduct;
-		
+
 		[TestInitialize]
 		public void Setup()
 		{
@@ -106,11 +106,23 @@ namespace zpi_aspnet_test.Tests.Controllers
 		{
 			_productRepository.GetProducts().Returns(_preparedProducts);
 			var controller = new ProductSelectionController(_stateRepository, _categoryRepository, _productRepository);
-			ActionResult call() => controller.Index("", ExampleCorrectPreferredPriceInput,
+
+			ActionResult Call() => controller.Index(Empty, ExampleCorrectPreferredPriceInput,
 				ExampleCorrectCount);
 
-			var exception = Xunit.Assert.Throws<HttpException>(call);
-			
+			ActionResult CallWithNull() => controller.Index(null, ExampleCorrectPreferredPriceInput,
+				ExampleCorrectCount);
+
+			var exception = Xunit.Assert.Throws<HttpException>(Call);
+			var exception2 = Xunit.Assert.Throws<HttpException>(CallWithNull);
+
+			var code = exception.GetHttpCode();
+			var message = exception.Message;
+
+			Assert.That(code, Is(EqualTo(Http403)));
+			Assert.That(message, Is(EqualTo(ExpectedMessageFor403Code)));
+			Assert.That(code, Is(EqualTo(exception2.GetHttpCode())));
+			Assert.That(message, Is(EqualTo(exception2.Message)));
 		}
 	}
 }
