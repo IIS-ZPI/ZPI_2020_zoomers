@@ -193,6 +193,25 @@ namespace zpi_aspnet_test.Tests.Controllers
 
 		[TestMethod]
 		public void
+			IndexShouldThrowHttpExceptionWithCode404AndSpecifiedMessageIfAnyRepositoryThrewItemNotFoundExxception()
+		{
+			_stateRepository.GetStates().Throws(new ItemNotFoundException());
+			var controller = new ProductSelectionController(_stateRepository, _categoryRepository, _productRepository);
+
+			ActionResult Call() => controller.Index(ProductName, ExampleCorrectPreferredPriceInput,
+				ExampleCorrectCount);
+
+			var exception = Xunit.Assert.Throws<HttpException>(Call);
+
+			var code = exception.GetHttpCode();
+			var message = exception.Message;
+
+			Assert.That(code, Is(EqualTo(Http404)));
+			Assert.That(message, Is(EqualTo(ExpectedMessageOf404Code)));
+		}
+
+		[TestMethod]
+		public void
 			IndexShouldThrowHttpExceptionWithCode500AndSpecifiedMessageForAccessToDbIssuesIfAnyRepositoryThrewAnAccessToNotConnectedDatabaseException()
 		{
 			_stateRepository.GetStates().Throws(new AccessToNotConnectedDatabaseException());
