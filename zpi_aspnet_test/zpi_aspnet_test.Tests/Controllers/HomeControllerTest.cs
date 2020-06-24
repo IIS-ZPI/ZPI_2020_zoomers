@@ -1,4 +1,6 @@
-﻿using System.Web;
+﻿using System;
+using System.Collections.Generic;
+using System.Web;
 using System.Web.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
@@ -20,6 +22,17 @@ namespace zpi_aspnet_test.Tests.Controllers
 		private ICategoryDatabaseAccess _categoryRepository;
 		private IStateDatabaseAccess _stateRepository;
 		private IProductDatabaseAccess _productRepository;
+		private ICollection<CategoryModel> _preparedCategories;
+		private ICollection<ProductModel> _preparedProducts;
+		private ICollection<StateOfAmericaModel> _preparedStates;
+
+		private CategoryModel _expectedCategory;
+		private StateOfAmericaModel _expectedState;
+		private TaxModel _expectedTax;
+		private ProductModel _expectedProduct;
+
+		private const string ExpectedMessageOf500CodeForAnyException =
+			"Server encountered some problems, please contact support";
 
 		private const string ExpectedMessageOf500CodeForAccessTrouble =
 			"Server encountered the problem with access to data";
@@ -33,6 +46,10 @@ namespace zpi_aspnet_test.Tests.Controllers
 			_stateRepository = Substitute.For<IStateDatabaseAccess>();
 			_productRepository = Substitute.For<IProductDatabaseAccess>();
 			_categoryRepository = Substitute.For<ICategoryDatabaseAccess>();
+
+			_preparedStates = new List<StateOfAmericaModel>();
+			_preparedCategories = new List<CategoryModel>();
+			_preparedProducts = new List<ProductModel>();
 		}
 
 		[TestMethod]
@@ -43,7 +60,6 @@ namespace zpi_aspnet_test.Tests.Controllers
 
 			// Act
 			var result = controller.Index() as ViewResult;
-
 			// Assert
 			Assert.That(result, Is(NotNull()));
 		}
@@ -72,7 +88,6 @@ namespace zpi_aspnet_test.Tests.Controllers
 
 			// Act
 			var result = controller.Contact() as ViewResult;
-
 			// Assert
 			Assert.That(result, Is(NotNull()));
 		}
@@ -224,6 +239,31 @@ namespace zpi_aspnet_test.Tests.Controllers
 			_productRepository.Received(0).DeleteProduct(Arg.Any<ProductModel>());
 			_productRepository.Received(0).DeleteProduct(Arg.Any<int>());
 			_productRepository.Received(0).DeleteProduct(Arg.Any<string>());
+		}
+
+		[TestMethod]
+		public void IndexPageShouldThrowHttpExceptionWithStatusCodeEqualTo500AndSpecifiedMessageIfAnyRepositoryThrowUnspecifiedException()
+		{
+			_stateRepository.GetStates().Throws(new Exception());
+
+			var controller = new HomeController(_categoryRepository, _stateRepository, _productRepository);
+
+			ActionResult Call() => controller.Index();
+			var exception = Xunit.Assert.Throws<HttpException>(Call);
+
+			var code = exception.GetHttpCode();
+			var message = exception.Message;
+
+			Assert.That(code, Is(EqualTo(Http500)));
+			Assert.That(message, Is(EqualTo(ExpectedMessageOf500CodeForAnyException)));
+		}
+
+		[TestMethod]
+		public void ViewModelOfIndexPageShouldHaveNotEmptySelectListsIfRepositoriesProvidedData()
+		{
+			_stateRepository.GetStates().Returns(_preparedStates);
+			_productRepository.GetProducts().Returns(_preparedProducts);
+			_categoryRepository.GetCategories().Returns(_preparedCategories);
 		}
 	}
 }
