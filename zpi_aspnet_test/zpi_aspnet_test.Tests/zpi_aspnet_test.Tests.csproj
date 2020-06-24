@@ -113,6 +113,12 @@
     <Compile Include="Builders\ProductBuilder.cs" />
     <Compile Include="Builders\StateBuilder.cs" />
     <Compile Include="Builders\TaxBuilder.cs" />
+    <Compile Include="Constants\DoubleConstants.cs" />
+    <Compile Include="Constants\IntConstants.cs" />
+    <Compile Include="Constants\StringConstants.cs" />
+    <Compile Include="Controllers\CategorySelectionControllerTests.cs" />
+    <Compile Include="Controllers\ProductSelectionControllerTests.cs" />
+    <Compile Include="Controllers\StateSelectionControllerTests.cs" />
     <Compile Include="Matchers\CollectionMatcher.cs" />
     <Compile Include="Matchers\DecoratorMatchers.cs" />
     <Compile Include="Matchers\DoesNotThrow.cs" />
@@ -139,9 +145,7 @@
       <Name>zpi_aspnet_test_xpath_parser</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="DatabaseInterfacesTests\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

@@ -19,7 +19,9 @@ using static zpi_aspnet_test.Tests.Builders.ProductBuilder;
 using static zpi_aspnet_test.Tests.Builders.StateBuilder;
 using static zpi_aspnet_test.Tests.Builders.TaxBuilder;
 using static NHamcrest.Has;
-
+using static zpi_aspnet_test.Tests.Constants.StringConstants;
+using static zpi_aspnet_test.Tests.Constants.IntConstants;
+using static zpi_aspnet_test.Tests.Constants.DoubleConstants;
 namespace zpi_aspnet_test.Tests.Controllers
 {
 	[TestClass]
@@ -36,26 +38,6 @@ namespace zpi_aspnet_test.Tests.Controllers
 		private StateOfAmericaModel _expectedState;
 		private TaxModel _expectedTax;
 		private ProductModel _expectedProduct;
-
-		private const string ExpectedMessageOf500CodeForAnyException =
-			"Server encountered some problems, please contact support";
-
-		private const string ExpectedMessageOf500CodeForAccessTrouble =
-			"Server encountered the problem with access to data";
-
-		private const string CategoryName = "TestCategory";
-		private const string ProductName = "TestProduct";
-		private const string StateName = "TestState";
-		private const int CategoryId = 1;
-		private const int ProductId = 1;
-		private const int StateId = 1;
-		private const int TaxId = 1;
-		private const double TaxRate = 5.0;
-		private const double MinMoney = 0.0;
-		private const double MaxMoney = 250.0;
-		private const double PurchasePrice = 21.36;
-		private const string ExpectedMessage = "About this app";
-		private const int Http500 = 500;
 
 		[TestInitialize]
 		public void Setup()
