@@ -40,5 +40,11 @@ namespace zpi_aspnet_test.Tests.Builders
 			_id = id;
 			return this;
 		}
+
+		public StateBuilder AppendTax(TaxModel expectedTax)
+		{
+			Taxes.Add(expectedTax);
+			return this;
+		}
 	}
 }

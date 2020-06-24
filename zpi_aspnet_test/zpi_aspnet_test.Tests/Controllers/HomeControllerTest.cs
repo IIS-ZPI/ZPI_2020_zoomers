@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -9,9 +11,13 @@ using zpi_aspnet_test.Controllers;
 using zpi_aspnet_test.DataBaseUtilities.Exceptions;
 using zpi_aspnet_test.DataBaseUtilities.Interfaces;
 using zpi_aspnet_test.Models;
+using zpi_aspnet_test.ViewModels;
 using Assert = NHamcrest.XUnit.Assert;
 using static NHamcrest.Is;
 using static zpi_aspnet_test.Tests.Matchers.DecoratorMatchers;
+using static zpi_aspnet_test.Tests.Builders.ProductBuilder;
+using static zpi_aspnet_test.Tests.Builders.StateBuilder;
+using static zpi_aspnet_test.Tests.Builders.TaxBuilder;
 using static NHamcrest.Has;
 
 namespace zpi_aspnet_test.Tests.Controllers
@@ -37,6 +43,17 @@ namespace zpi_aspnet_test.Tests.Controllers
 		private const string ExpectedMessageOf500CodeForAccessTrouble =
 			"Server encountered the problem with access to data";
 
+		private const string CategoryName = "TestCategory";
+		private const string ProductName = "TestProduct";
+		private const string StateName = "TestState";
+		private const int CategoryId = 1;
+		private const int ProductId = 1;
+		private const int StateId = 1;
+		private const int TaxId = 1;
+		private const double TaxRate = 5.0;
+		private const double MinMoney = 0.0;
+		private const double MaxMoney = 250.0;
+		private const double PurchasePrice = 21.36;
 		private const string ExpectedMessage = "About this app";
 		private const int Http500 = 500;
 
@@ -47,9 +64,23 @@ namespace zpi_aspnet_test.Tests.Controllers
 			_productRepository = Substitute.For<IProductDatabaseAccess>();
 			_categoryRepository = Substitute.For<ICategoryDatabaseAccess>();
 
-			_preparedStates = new List<StateOfAmericaModel>();
-			_preparedCategories = new List<CategoryModel>();
-			_preparedProducts = new List<ProductModel>();
+			_expectedCategory = new CategoryModel
+			{
+				Id = CategoryId, Name = CategoryName
+			};
+
+			_expectedProduct = Product().OfCategory(_expectedCategory).WithCategoryId(CategoryId)
+			   .OfName(ProductName).WithId(ProductId).WithPurchasePrice(PurchasePrice).Build();
+
+			_expectedTax = Tax().OfTaxRate(TaxRate).OfMinValue(MinMoney).OfMaxValue(MaxMoney)
+			   .OfCategoryId(CategoryId).OfStateId(StateId).OfId(TaxId).Build();
+
+			_expectedState = State().OfName(StateName).OfId(StateId)
+			   .OfBaseSalesTax(TaxRate).AppendTax(_expectedTax).Build();
+
+			_preparedStates = new List<StateOfAmericaModel> {_expectedState};
+			_preparedCategories = new List<CategoryModel> {_expectedCategory};
+			_preparedProducts = new List<ProductModel> {_expectedProduct};
 		}
 
 		[TestMethod]
@@ -264,6 +295,25 @@ namespace zpi_aspnet_test.Tests.Controllers
 			_stateRepository.GetStates().Returns(_preparedStates);
 			_productRepository.GetProducts().Returns(_preparedProducts);
 			_categoryRepository.GetCategories().Returns(_preparedCategories);
+			
+			var controller = new HomeController(_categoryRepository, _stateRepository, _productRepository);
+
+			var result = controller.Index() as ViewResult;
+			// Assert
+			Assert.That(result, Is(NotNull()));
+
+			var viewModel = result?.Model as MainViewModel;
+
+			Assert.That(viewModel, Is(NotNull()));
+
+			var productsList = viewModel?.ProductSelectList.Items.Cast<ProductModel>().ToList();
+			var statesList = viewModel?.StateSelectList.Items.Cast<StateOfAmericaModel>().ToList();
+			var categoriesList = viewModel?.CategorySelectList.Items.Cast<CategoryModel>().ToList();
+
+			Assert.That(productsList, Is<ICollection>(Not(OfLength(0))));
+			Assert.That(statesList, Is<ICollection>(Not(OfLength(0))));
+			Assert.That(categoriesList, Is<ICollection>(Not(OfLength(0))));
+
 		}
 	}
 }
