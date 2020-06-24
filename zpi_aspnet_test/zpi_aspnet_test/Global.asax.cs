@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
@@ -12,6 +13,7 @@ using zpi_aspnet_test.ViewModels;
 
 namespace zpi_aspnet_test
 {
+	[ExcludeFromCodeCoverage]
 	public class MvcApplication : HttpApplication
 	{
 		protected void Application_Start()
@@ -81,6 +83,7 @@ namespace zpi_aspnet_test
 		}
 	}
 
+	[ExcludeFromCodeCoverage]
 	internal sealed class ServiceDependencyResolver : IDependencyResolver
 	{
 		private readonly IDependencyResolver _currentResolver;
@@ -100,6 +103,7 @@ namespace zpi_aspnet_test
 			_provider?.GetServices(serviceType) ?? _currentResolver?.GetServices(serviceType) ?? new object[0];
 	}
 
+	[ExcludeFromCodeCoverage]
 	internal sealed class ZoomersControllerFactory : DefaultControllerFactory
 	{
 		private readonly IDependencyResolver _resolver;
