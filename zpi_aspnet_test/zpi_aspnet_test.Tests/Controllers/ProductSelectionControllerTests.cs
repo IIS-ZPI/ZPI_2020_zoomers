@@ -1,19 +1,20 @@
-﻿using System;
-using System.Text;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Web;
+using System.Web.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using zpi_aspnet_test.Controllers;
 using zpi_aspnet_test.DataBaseUtilities.Interfaces;
 using zpi_aspnet_test.Models;
-using zpi_aspnet_test.Tests.Matchers;
 using static zpi_aspnet_test.Tests.Matchers.DecoratorMatchers;
 using static NHamcrest.Is;
-using static NHamcrest.Has;
-using Assert = NHamcrest.XUnit.Assert;
 using static zpi_aspnet_test.Tests.Builders.ProductBuilder;
 using static zpi_aspnet_test.Tests.Builders.StateBuilder;
 using static zpi_aspnet_test.Tests.Builders.TaxBuilder;
+using static zpi_aspnet_test.Tests.Constants.StringConstants;
+using static zpi_aspnet_test.Tests.Constants.IntConstants;
+using static zpi_aspnet_test.Tests.Constants.DoubleConstants;
+using Assert = NHamcrest.XUnit.Assert;
 
 namespace zpi_aspnet_test.Tests.Controllers
 {
@@ -27,33 +28,11 @@ namespace zpi_aspnet_test.Tests.Controllers
 		private ICollection<CategoryModel> _preparedCategories;
 		private ICollection<ProductModel> _preparedProducts;
 		private ICollection<StateOfAmericaModel> _preparedStates;
-		private const int ExampleCorrectCount = 2138;
-		private const string ExampleCorrectPreferredPriceInput = "14.87";
 		private CategoryModel _expectedCategory;
 		private StateOfAmericaModel _expectedState;
 		private TaxModel _expectedTax;
 		private ProductModel _expectedProduct;
-
-		private const string ExpectedMessageOf500CodeForAnyException =
-			"Server encountered some problems, please contact support";
-
-		private const string ExpectedMessageOf500CodeForAccessTrouble =
-			"Server encountered the problem with access to data";
-
-		private const string CategoryName = "TestCategory";
-		private const string ProductName = "TestProduct";
-		private const string StateName = "TestState";
-		private const int CategoryId = 1;
-		private const int ProductId = 1;
-		private const int StateId = 1;
-		private const int TaxId = 1;
-		private const double TaxRate = 5.0;
-		private const double MinMoney = 0.0;
-		private const double MaxMoney = 250.0;
-		private const double PurchasePrice = 21.36;
-		private const string ExpectedMessage = "About this app";
-		private const int Http500 = 500;
-
+		
 		[TestInitialize]
 		public void Setup()
 		{
@@ -120,6 +99,18 @@ namespace zpi_aspnet_test.Tests.Controllers
 			controller.Index(ProductName, ExampleCorrectPreferredPriceInput,
 				ExampleCorrectCount);
 			_productRepository.Received(1).GetProducts();
+		}
+
+		[TestMethod]
+		public void IndexShouldThrowHttpExceptionWithCode403AndSpecifiedMessageIfProductStringWillBeNullOrEmpty()
+		{
+			_productRepository.GetProducts().Returns(_preparedProducts);
+			var controller = new ProductSelectionController(_stateRepository, _categoryRepository, _productRepository);
+			ActionResult call() => controller.Index("", ExampleCorrectPreferredPriceInput,
+				ExampleCorrectCount);
+
+			var exception = Xunit.Assert.Throws<HttpException>(call);
+			
 		}
 	}
 }
