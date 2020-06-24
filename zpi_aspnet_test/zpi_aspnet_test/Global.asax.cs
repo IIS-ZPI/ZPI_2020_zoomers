@@ -4,7 +4,6 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-using Microsoft.Ajax.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using zpi_aspnet_test.Controllers;
 using zpi_aspnet_test.DataBaseUtilities.DAOs;

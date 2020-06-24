@@ -8,7 +8,7 @@ using NHamcrest.Core;
 using zpi_aspnet_test.Algorithms;
 using zpi_aspnet_test.Enumerators;
 using zpi_aspnet_test.Models;
-
+using zpi_aspnet_test.Tests.Matchers;
 using Assert = NHamcrest.XUnit.Assert;
 
 using static zpi_aspnet_test.Tests.Builders.ProductBuilder;

@@ -40,16 +40,16 @@
     <div id="byProduct" class="row tab-pane fade in" style="margin-top: 10px">
         @using (Html.BeginForm("Index", "ProductSelection", FormMethod.Post, new { @class = "form-row col-md-12", role = "form" }))
         {
-            <div class="form-group col-12 col-md-4 col-lg-3 col-xl-2">
+            <div class="form-group col-12 col-md-4 col-lg-3 col-xl-3">
                 @Html.DropDownList("product", Model.ProductSelectList, "Select Product", new { @id = "selectProduct", @class = "form-control", @required = true })
             </div>
-            <div class="form-group col-12 col-md-3 col-lg-3 col-xl-2">
+            <div class="form-group col-12 col-md-3 col-lg-3 col-xl-3">
                 <input type="text"  pattern="(^\d+([,.]\d+)*?)" step="0.01" min="0.01" class="target targetRegex form-control" id="priceInput" name="preferredPriceInput" placeholder="Preferred Price" required />
             </div>
-            <div class="form-group col-12 col-md-4 col-lg-3 col-xl-2">
+            <div class="form-group col-12 col-md-4 col-lg-3 col-xl-3">
                 <input type="number" step="1" min="1" class="target form-control" id="numberOfProducts" name="count" placeholder="Number Of Products" required />
             </div>
-            <div class="form-group col-12 col-md-1 col-lg-3 col-xl-2">
+            <div class="form-group col-12 col-md-1 col-lg-3 col-xl-3">
                 <input type="submit" class="btn btn-default" value="Submit" />
             </div>
         }
@@ -73,13 +73,13 @@
             <div class="form-group col-12 col-md-2 col-xl-2">
                 @Html.DropDownList("state", Model.StateSelectList, "Select State", new { @id = "selectState", @class = "form-control", @required = true })
             </div>
-            <div class="form-group col-12 col-md-2 col-xl-2">
+            <div class="form-group col-12 col-md-2 col-xl-3">
                 @Html.DropDownList("product", Model.ProductSelectList, "Select Product", new { @id = "selectCategory", @class = "form-control", @required = true })
             </div>
             <div class="form-group col-12 col-md-3 col-xl-2">
                 <input type="text" pattern="(^\d+([,.]\d+)*?)" step="0.01" min="0.01" class="target targetRegex form-control" id="priceInput" name="preferredPriceInput" placeholder="Preferred Price" required />
             </div>
-            <div class="form-group col-12 col-md-3 col-xl-2">
+            <div class="form-group col-12 col-md-3 col-xl-3">
                 <input type="number" step="1" min="1" class="target form-control" id="numberOfProducts" name="count" placeholder="Number Of Products" required />
             </div>
             <div class="form-group col-12 col-md-2 col-xl-2">

@@ -25,13 +25,13 @@ namespace zpi_aspnet_test.Models
 			builder.Append("------------------------------------\n");
 			builder.Append($"State: {Name}, Id: {Id}, Base sales tax: {BaseSalesTax}\n");
 			builder.Append("------------------------------------\n");
-			builder.Append("|    TaxId    |  CategoryID |   MinValue  |   MaxValue  |   TaxRate   |");
-			builder.Append("-----------------------------------------------------------------------");
+			builder.Append("|    TaxId    |  CategoryID |   MinValue  |   MaxValue  |   TaxRate   |\n");
+			builder.Append("-----------------------------------------------------------------------\n");
 			foreach (var tax in TaxRates)
 			{
 				builder.Append(
-					$"|      {tax.Id,5}  |      {tax.CategoryId,5}  |   {tax.MinValue,10:,##}|   {tax.MaxValue,10:,##}|   {tax.TaxRate,10:P}|");
-				builder.Append("-----------------------------------------------------------------------");
+					$"|      {tax.Id,5}  |      {tax.CategoryId,5}  |   {tax.MinValue,10}|   {(tax.MaxValue != double.MaxValue ? tax.MaxValue: double.PositiveInfinity),10}|   {tax.TaxRate,10}%|\n");
+				builder.Append("-----------------------------------------------------------------------\n");
 			}
 
 			return builder.ToString();

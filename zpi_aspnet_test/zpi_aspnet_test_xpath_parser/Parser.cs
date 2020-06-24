@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using zpi_aspnet_test.Extensions;
 using HtmlAgilityPack;
@@ -19,6 +20,10 @@ namespace zpi_aspnet_test_xpath_parser
 			{15, ProductCategoryEnum.Clothing},
 			{17, ProductCategoryEnum.Intangibles}
 		};
+
+		private static NumberFormatInfo _format;
+
+		static Parser() => _format = new NumberFormatInfo {NumberDecimalSeparator = "."};
 
 		public static List<StateOfAmericaModel> GetStatesModelsFromWikipedia()
 		{
@@ -42,7 +47,7 @@ namespace zpi_aspnet_test_xpath_parser
 						case 3:
 							var percent = childNode.InnerText.Trim();
 							state.BaseSalesTax =
-								double.Parse(percent.Replace('.', ',').Substring(0, percent.Length - 1));
+								double.Parse(percent.Substring(0, percent.Length - 1), _format);
 							break;
 						case 7:
 						case 9:
@@ -84,7 +89,7 @@ namespace zpi_aspnet_test_xpath_parser
 					}
 
 					var condition = innerText.Length > 0
-						? double.Parse(innerText.Trim().Replace('.', ','))
+						? double.Parse(innerText.Trim(), _format)
 						: 0;
 
 					rates.Add(new TaxModel
@@ -93,12 +98,12 @@ namespace zpi_aspnet_test_xpath_parser
 					if (condition > 0)
 					{
 						rates.Add(new TaxModel
-							{CategoryId = (int) type, MinValue = condition + 0.01, MaxValue = double.MaxValue, TaxRate = state.BaseSalesTax});
+						{
+							CategoryId = (int) type, MinValue = condition + 0.01, MaxValue = double.MaxValue,
+							TaxRate = state.BaseSalesTax
+						});
 					}
 
-					Console.WriteLine(condition > 0
-						? $"Amount of money should be less than ${condition}"
-						: "There is no conditions for not exempting product from sales tax");
 					break;
 				case "#7788ff":
 					if (innerText.Length > 0)
@@ -109,8 +114,9 @@ namespace zpi_aspnet_test_xpath_parser
 
 					var taxRate = innerText.Length == 0
 						? state.BaseSalesTax
-						: double.Parse(innerText.Trim().Replace('.', ','));
-					rates.Add(new TaxModel{CategoryId = (int)type, MinValue = 0.0, MaxValue = 0.0, TaxRate = taxRate, });
+						: double.Parse(innerText.Trim(), _format);
+					rates.Add(new TaxModel
+						{CategoryId = (int) type, MinValue = 0.0, MaxValue = 0.0, TaxRate = taxRate,});
 					break;
 			}
 		}
